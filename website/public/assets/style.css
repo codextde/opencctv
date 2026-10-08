@@ -111,7 +111,7 @@ code, pre, kbd { font-family: var(--mono); }
 .browser .bar { display: flex; align-items: center; gap: 8px; padding: 11px 14px; border-bottom: 1px solid var(--line); background: #121519; }
 .browser .bar i { width: 11px; height: 11px; border-radius: 50%; background: #2A3038; }
 .browser .bar span { margin: 0 auto; font-size: 12.5px; color: var(--dim); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 3px 40px; font-family: var(--mono); }
-.browser img { width: 100%; height: auto; aspect-ratio: 1600 / 840; object-fit: cover; background: #0B0D10; }
+.browser img { width: 100%; height: auto; aspect-ratio: 1600 / 1000; object-fit: cover; object-position: top left; background: #0B0D10; }
 .stage .phone { position: absolute; right: -28px; bottom: 0; width: 26%; max-width: 290px; }
 .phone { position: relative; border-radius: 15% / 7%; background: #050607; padding: 3.2%; box-shadow: 0 40px 80px -20px rgba(0, 0, 0, .85), 0 0 0 1px rgba(255, 255, 255, .1) inset, 0 0 0 1.5px #2A3038; }
 .phone img { width: 100%; height: auto; aspect-ratio: 393 / 852; object-fit: cover; border-radius: 12.5% / 5.8%; background: var(--bg); }
