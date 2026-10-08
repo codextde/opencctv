@@ -141,7 +141,7 @@ Motion-only recording keeps segments that overlap a motion event (plus the pre/p
 
 OpenCCTV only asks for the `drive.file` scope: it can see and manage the files it created, nothing else.
 
-1. **One click (device code)**: if the server has `OPENCCTV_GOOGLE_CLIENT_ID` / `OPENCCTV_GOOGLE_CLIENT_SECRET` (a Google Cloud OAuth client of type "TVs and Limited Input devices" with the Drive API enabled), "Connect Google Drive" shows a code; open google.com/device on any device, enter it, done.
+1. **One click (device code)**: official release binaries and the Docker image include the OpenCCTV Google client, so "Connect Google Drive" just shows a code; open google.com/device on any device, enter it, done. If you build OpenCCTV yourself, set `OPENCCTV_GOOGLE_CLIENT_ID` / `OPENCCTV_GOOGLE_CLIENT_SECRET` (a Google Cloud OAuth client of type "TVs and Limited Input devices" with the Drive API enabled), or pass `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` to `bun run build`.
 2. **Your own OAuth client (browser)**: create an OAuth client of type "Web application", add `https://<your-server>/api/storage/gdrive/callback` as redirect URI, paste client id and secret into the dialog and sign in.
 3. **Paste an rclone token**: run `rclone authorize "drive"` on any computer with a browser and paste the printed JSON.
 

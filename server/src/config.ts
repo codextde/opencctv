@@ -5,6 +5,13 @@ import pkg from "../package.json" with { type: "json" };
 
 export const VERSION: string = pkg.version;
 
+declare const OPENCCTV_BUILTIN_GOOGLE_CLIENT_ID: string | undefined;
+declare const OPENCCTV_BUILTIN_GOOGLE_CLIENT_SECRET: string | undefined;
+const builtinGoogle = {
+  id: typeof OPENCCTV_BUILTIN_GOOGLE_CLIENT_ID === "string" ? OPENCCTV_BUILTIN_GOOGLE_CLIENT_ID : undefined,
+  secret: typeof OPENCCTV_BUILTIN_GOOGLE_CLIENT_SECRET === "string" ? OPENCCTV_BUILTIN_GOOGLE_CLIENT_SECRET : undefined,
+};
+
 export type Config = {
   dataDir: string;
   port: number;
@@ -71,8 +78,8 @@ export function loadConfig(args: string[] = process.argv.slice(2)): Config {
     adminUser: env("OPENCCTV_ADMIN_USER"),
     adminPassword: env("OPENCCTV_ADMIN_PASSWORD"),
     google: {
-      clientId: env("OPENCCTV_GOOGLE_CLIENT_ID"),
-      clientSecret: env("OPENCCTV_GOOGLE_CLIENT_SECRET"),
+      clientId: env("OPENCCTV_GOOGLE_CLIENT_ID") ?? builtinGoogle.id,
+      clientSecret: env("OPENCCTV_GOOGLE_CLIENT_ID") ? env("OPENCCTV_GOOGLE_CLIENT_SECRET") : builtinGoogle.secret,
       webClientId: env("OPENCCTV_GOOGLE_WEB_CLIENT_ID"),
       webClientSecret: env("OPENCCTV_GOOGLE_WEB_CLIENT_SECRET"),
     },

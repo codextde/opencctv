@@ -4,13 +4,16 @@
 FROM --platform=$BUILDPLATFORM oven/bun:1.3 AS build
 ARG TARGETARCH
 ARG VERSION=""
+ARG GOOGLE_CLIENT_ID=""
+ARG GOOGLE_CLIENT_SECRET=""
 WORKDIR /src/server
 COPY server/package.json server/bun.lock ./
 RUN bun install --frozen-lockfile
 COPY server/ ./
 RUN if [ -n "$VERSION" ]; then bun -e "const p=await Bun.file('package.json').json();p.version=process.env.VERSION.replace(/^v/,'');await Bun.write('package.json',JSON.stringify(p,null,2))"; fi
-RUN case "$TARGETARCH" in arm64) T=bun-linux-arm64 ;; *) T=bun-linux-x64 ;; esac && \
-    bun build --compile --production --target=$T src/index.ts --outfile /out/opencctv
+RUN case "$TARGETARCH" in arm64) T=linux-arm64 ;; *) T=linux-x64 ;; esac && \
+    GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" bun run scripts/build.ts $T && \
+    mkdir -p /out && cp dist/opencctv-$T /out/opencctv
 
 FROM debian:bookworm-slim AS tools
 ARG TARGETARCH
