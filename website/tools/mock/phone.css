@@ -1,0 +1,22 @@
+body { width: 393px; height: 852px; overflow: hidden; position: relative; font-size: 14px; }
+.status { height: 54px; display: flex; justify-content: space-between; align-items: center; padding: 6px 32px 0 40px; font-weight: 650; font-size: 16px; }
+.status .r { display: flex; gap: 6px; align-items: center; }
+.status .sig { display: flex; gap: 2px; align-items: flex-end; height: 11px; }
+.status .sig i { width: 3px; background: #fff; border-radius: 1px; }
+.status .bat { width: 25px; height: 12px; border: 1.5px solid rgba(255,255,255,.5); border-radius: 4px; padding: 1.5px; }
+.status .bat i { display: block; height: 100%; width: 78%; background: #fff; border-radius: 1.5px; }
+.content { padding: 0 16px; }
+.title { display: flex; align-items: center; justify-content: space-between; padding: 6px 4px 14px; }
+.title h1 { font-size: 30px; font-weight: 750; letter-spacing: -.03em; }
+.title .srv { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; font-weight: 550; margin-top: 2px; }
+.round { width: 38px; height: 38px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; color: var(--ink); }
+.tabs { position: absolute; left: 0; right: 0; bottom: 0; height: 84px; background: rgba(14,17,21,.97); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, 1fr); padding-top: 9px; text-align: center; font-size: 10.5px; font-weight: 600; color: var(--dim); }
+.tabs span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.tabs svg.i { width: 23px; height: 23px; }
+.tabs .on { color: var(--accent2); }
+.home { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 134px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.85); }
+.chips { display: flex; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 14px; overflow: hidden; }
+.chips span { padding: 6px 13px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.chips .on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.label { font-size: 12px; font-weight: 650; color: var(--dim); text-transform: uppercase; letter-spacing: .07em; margin: 18px 4px 8px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }

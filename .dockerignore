@@ -1,0 +1,8 @@
+**/node_modules
+**/.git
+server/dist
+app
+website
+store
+credentials
+docs

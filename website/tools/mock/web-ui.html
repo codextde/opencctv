@@ -1,0 +1,115 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="mock.css">
+<style>
+body { width: 1600px; height: 840px; display: grid; grid-template-columns: 220px 1fr 300px; overflow: hidden; }
+aside { background: var(--sunken); border-right: 1px solid var(--line); padding: 20px 14px; display: flex; flex-direction: column; gap: 4px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -.02em; padding: 4px 8px 22px; }
+.brand img { width: 26px; height: 26px; }
+.nav a { display: flex; align-items: center; gap: 11px; padding: 9px 10px; border-radius: 9px; color: var(--muted); font-size: 14px; font-weight: 550; }
+.nav a.on { background: var(--accent-soft); color: var(--accent2); }
+.nav a b { margin-left: auto; font-size: 11px; font-weight: 650; color: var(--motion); background: var(--motion-soft); padding: 1px 7px; border-radius: 999px; }
+.sec { font-size: 10.5px; font-weight: 650; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); padding: 18px 10px 6px; }
+.sys { margin-top: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font-size: 12px; color: var(--muted); display: grid; gap: 8px; }
+.sys .row { display: flex; justify-content: space-between; }
+.sys .row span:last-child { color: var(--ink); font-weight: 600; }
+.bar { height: 5px; border-radius: 3px; background: var(--raised); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 38%; background: var(--accent); }
+main { padding: 20px 22px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.head { display: flex; align-items: center; gap: 12px; }
+.head h1 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+.head .sub { color: var(--muted); font-size: 13px; }
+.seg { margin-left: auto; display: flex; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 3px; font-size: 12.5px; font-weight: 600; color: var(--muted); }
+.seg span { padding: 5px 11px; border-radius: 7px; }
+.seg .on { background: var(--raised); color: var(--ink); }
+.btn { display: inline-flex; align-items: center; gap: 7px; background: var(--accent); color: #03201C; font-weight: 650; font-size: 13px; padding: 8px 13px; border-radius: 10px; }
+.chips { display: flex; gap: 8px; font-size: 12.5px; font-weight: 600; }
+.chips span { padding: 5px 11px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); }
+.chips .on { color: var(--ink); border-color: var(--line2); }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.grid .cam { aspect-ratio: 16 / 9; }
+.tl { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.tl .lab { display: flex; justify-content: space-between; font-size: 11px; color: var(--dim); margin-top: 8px; font-variant-numeric: tabular-nums; }
+.track { position: relative; height: 26px; border-radius: 6px; background: var(--sunken); overflow: hidden; }
+.track i { position: absolute; top: 0; bottom: 0; background: rgba(20,184,166,.22); }
+.track b { position: absolute; top: 4px; bottom: 4px; width: 3px; border-radius: 2px; background: var(--motion); }
+.track em { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--accent2); }
+.right { border-left: 1px solid var(--line); background: var(--sunken); padding: 20px 16px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+.right h2 { font-size: 15px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.right h2 small { font-size: 12px; color: var(--muted); font-weight: 500; }
+.ev { display: grid; grid-template-columns: 104px 1fr; gap: 12px; align-items: center; padding: 8px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+.ev .cam { height: 60px; border-radius: 8px; }
+.ev strong { display: block; font-size: 13px; font-weight: 650; }
+.ev span { display: block; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+.ev .tag { display: inline-block; margin-top: 6px; font-size: 10.5px; font-weight: 650; color: var(--motion); background: var(--motion-soft); padding: 1px 7px; border-radius: 999px; }
+.ev .tag.up { color: var(--accent2); background: var(--accent-soft); }
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="grid" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></symbol>
+  <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="bolt" viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6l1-8z"/></symbol>
+  <symbol id="cam" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="M16 10l5-3v10l-5-3"/></symbol>
+  <symbol id="cloud" viewBox="0 0 24 24"><path d="M7 18h10a4 4 0 0 0 .5-8A6 6 0 0 0 6 9.5 4.3 4.3 0 0 0 7 18z"/></symbol>
+  <symbol id="globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/></symbol>
+  <symbol id="users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c1.8.7 3 2.4 3.5 5.2"/></symbol>
+  <symbol id="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+</svg>
+<aside>
+  <div class="brand"><img src="../../public/assets/mark.svg" alt="">OpenCCTV</div>
+  <nav class="nav">
+    <a class="on"><svg class="i"><use href="#grid"/></svg>Live</a>
+    <a><svg class="i"><use href="#clock"/></svg>Timeline</a>
+    <a><svg class="i"><use href="#bolt"/></svg>Events<b>12</b></a>
+    <div class="sec">Manage</div>
+    <a><svg class="i"><use href="#cam"/></svg>Cameras</a>
+    <a><svg class="i"><use href="#cloud"/></svg>Storage</a>
+    <a><svg class="i"><use href="#globe"/></svg>Remote access</a>
+    <a><svg class="i"><use href="#users"/></svg>Users &amp; devices</a>
+    <a><svg class="i"><use href="#gear"/></svg>Settings</a>
+  </nav>
+  <div class="sys">
+    <div class="row"><span>Local disk</span><span>186 GB free</span></div>
+    <div class="bar"><i></i></div>
+    <div class="row"><span>Google Drive</span><span>synced 14:31</span></div>
+    <div class="row"><span>Retention</span><span>30 days</span></div>
+  </div>
+</aside>
+<main>
+  <div class="head">
+    <div><h1>Live</h1><div class="sub">Home · 9 cameras · all online</div></div>
+    <div class="seg"><span>1</span><span>2×2</span><span>3×2</span><span class="on">3×3</span><span>4×4</span></div>
+    <span class="btn"><svg class="i" style="width:16px;height:16px"><use href="#plus"/></svg>Add camera</span>
+  </div>
+  <div class="chips"><span class="on">All</span><span>Outside</span><span>Shop</span><span>Garage</span></div>
+  <div class="grid">
+    <div class="cam"><img src="frames/front-door-3.jpg"><div class="ov"><div class="top"><span>Front door</span><span class="pill mot">MOTION</span></div><div class="bot"><span>Tapo C120 · 2K</span><span>14:32:07</span></div></div></div>
+    <div class="cam"><img src="frames/backyard-3.jpg"><div class="ov"><div class="top"><span>Backyard</span><span class="pill rec">REC</span></div><div class="bot"><span>Reolink RLC-811A · 4K</span><span>14:32:07</span></div></div></div>
+    <div class="cam"><img src="frames/street-6.jpg"><div class="ov"><div class="top"><span>Street</span><span class="pill rec">REC</span></div><div class="bot"><span>UniFi G4 Bullet</span><span>14:32:07</span></div></div></div>
+    <div class="cam"><img src="frames/parking-deck-3.jpg"><div class="ov"><div class="top"><span>Garage</span><span class="pill rec">REC</span></div><div class="bot"><span>Hikvision DS-2CD2143</span><span>14:32:07</span></div></div></div>
+    <div class="cam"><img src="frames/shop-entrance-3.jpg"><div class="ov"><div class="top"><span>Shop entrance</span><span class="pill rec">REC</span></div><div class="bot"><span>Dahua IPC-HDW2431</span><span>14:32:07</span></div></div></div>
+    <div class="cam"><img src="frames/storefront-3.jpg"><div class="ov"><div class="top"><span>Storefront</span><span class="pill rec">REC</span></div><div class="bot"><span>Axis M3106-L</span><span>14:32:07</span></div></div></div>
+    <div class="cam"><img src="frames/garage-6.jpg"><div class="ov"><div class="top"><span>Workshop</span><span class="pill rec">REC</span></div><div class="bot"><span>Amcrest IP5M · ONVIF</span><span>14:32:07</span></div></div></div>
+    <div class="cam"><img src="frames/street-3.jpg"><div class="ov"><div class="top"><span>Driveway</span><span class="pill rec">REC</span></div><div class="bot"><span>Imou Bullet 2 · RTSP</span><span>14:32:07</span></div></div></div>
+    <div class="cam"><img src="frames/bakery-3.jpg"><div class="ov"><div class="top"><span>Bakery</span><span class="pill rec">REC</span></div><div class="bot"><span>eufy Indoor Cam 2K · RTSP</span><span>14:32:07</span></div></div></div>
+  </div>
+  <div class="tl">
+    <div class="track">
+      <i style="left:0;width:60.5%"></i>
+      <b style="left:8%"></b><b style="left:19%"></b><b style="left:22%"></b><b style="left:41%"></b><b style="left:57%"></b><b style="left:59.5%"></b>
+      <em style="left:60.5%"></em>
+    </div>
+    <div class="lab"><span>00:00</span><span>04:00</span><span>08:00</span><span>12:00</span><span>16:00</span><span>20:00</span><span>24:00</span></div>
+  </div>
+</main>
+<div class="right">
+  <h2>Motion events <small>Today</small></h2>
+  <div class="ev"><div class="cam"><img src="frames/front-door-6.jpg"></div><div><strong>Front door</strong><span>14:31:52 · 18 s</span><span class="tag">Motion</span></div></div>
+  <div class="ev"><div class="cam"><img src="frames/shop-entrance-6.jpg"></div><div><strong>Shop entrance</strong><span>14:02:10 · 41 s</span><span class="tag up">Uploaded to Drive</span></div></div>
+  <div class="ev"><div class="cam"><img src="frames/backyard-6.jpg"></div><div><strong>Backyard</strong><span>13:47:33 · 12 s</span><span class="tag up">Uploaded to Drive</span></div></div>
+  <div class="ev"><div class="cam"><img src="frames/storefront-3.jpg"></div><div><strong>Storefront</strong><span>12:15:04 · 26 s</span><span class="tag up">Uploaded to S3</span></div></div>
+  <div class="ev"><div class="cam"><img src="frames/garage-3.jpg"></div><div><strong>Garage</strong><span>09:58:21 · 9 s</span><span class="tag up">Uploaded to Drive</span></div></div>
+  <div class="ev"><div class="cam"><img src="frames/street-3.jpg"></div><div><strong>Street</strong><span>07:12:46 · 33 s</span><span class="tag up">Uploaded to S3</span></div></div>
+  <div class="ev"><div class="cam"><img src="frames/storefront-6.jpg"></div><div><strong>Storefront</strong><span>06:40:19 · 15 s</span><span class="tag up">Uploaded to S3</span></div></div>
+</div>
+</body></html>

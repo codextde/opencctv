@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenCCTV – Free, open-source NVR and camera app for Tapo, UniFi, Reolink and any RTSP camera</title>
+<meta name="description" content="OpenCCTV is a free, open-source camera server, NVR and cloud recorder with iPhone and Android apps. Records Tapo, UniFi, Reolink, Hikvision and any RTSP or ONVIF camera 24/7 or on motion and uploads to Google Drive, S3 or your NAS. No vendor cloud, no subscription.">
+<link rel="canonical" href="https://opencctv.codext.de/">
+<link rel="alternate" hreflang="en" href="https://opencctv.codext.de/">
+<link rel="alternate" hreflang="de" href="https://opencctv.codext.de/de/">
+<link rel="alternate" hreflang="x-default" href="https://opencctv.codext.de/">
+<meta name="theme-color" content="#0B0D10">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="OpenCCTV">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="OpenCCTV – Your cameras. Your server. Your storage.">
+<meta property="og:description" content="Free, open-source NVR with iPhone and Android apps. Record Tapo, UniFi, Reolink and any RTSP or ONVIF camera to your own disk, Google Drive, S3 or NAS.">
+<meta property="og:url" content="https://opencctv.codext.de/">
+<meta property="og:image" content="https://opencctv.codext.de/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/assets/favicon-48.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"OpenCCTV","applicationCategory":"MultimediaApplication","operatingSystem":"Linux, macOS, Windows, Docker, iOS, Android","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"license":"https://opensource.org/licenses/MIT","url":"https://opencctv.codext.de/","downloadUrl":"https://github.com/codextde/opencctv/releases","author":{"@type":"Organization","name":"Codext GmbH","url":"https://codext.de"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+  <header class="nav">
+    <a class="brand" href="/"><img src="/assets/favicon.svg" alt="" width="30" height="30">OpenCCTV</a>
+    <nav class="nav-links" aria-label="Main">
+      <a class="opt" href="#features">Features</a>
+      <a class="opt" href="#how">How it works</a>
+      <a class="opt" href="#quick-start">Quick start</a>
+      <a class="opt" href="#faq">FAQ</a>
+      <a class="gh" href="https://github.com/codextde/opencctv"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>GitHub</a>
+      <a class="lang" href="/de/" hreflang="de" lang="de">DE</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <span class="eyebrow"><b>Open source</b><span>MIT licensed · self-hosted<span class="x"> · no account</span></span></span>
+      <h1 id="hero-title"><i>Your cameras.</i> <i>Your server.</i> <span>Your storage.</span></h1>
+      <p class="lead">OpenCCTV is a free camera server and NVR for <strong>Tapo, UniFi, Reolink</strong> and any <strong>RTSP or ONVIF</strong> camera. It records 24/7 or on motion, uploads to Google Drive, S3 or your NAS, and streams to apps for iPhone and Android. No vendor cloud, no subscription, no account with us.</p>
+      <div class="actions">
+        <a class="btn" href="/ios"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.8 1.2 1.8 2.6 3.1 2.6 1.3-.1 1.7-.8 3.3-.8s2 .8 3.4.8c1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.6-1-2.6-4.1zM13.9 5c.7-.9 1.2-2 1.1-3.2-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.1.1 2.3-.6 3-1.5z"/></svg><span><small>Download on the</small>App Store</span></a>
+        <a class="btn" href="/android"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 1.8c-.2.2-.3.6-.3 1v18.4c0 .4.1.8.3 1l10.2-10.2L3.6 1.8zm11.4 9.1l2.9-2.9L5.2.8c-.3-.2-.7-.2-1-.1L15 10.9zm0 2.2L4.2 23.3c.3.1.7.1 1-.1L17.9 16l-2.9-2.9zm6.4-2.2l-2.6-1.5-3.1 3.1 3.1 3 2.6-1.5c.8-.5.8-1.7 0-2.1z"/></svg><span><small>Get it on</small>Google Play</span></a>
+        <a class="btn ghost" href="https://github.com/codextde/opencctv"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>Source on GitHub</a>
+      </div>
+      <p class="demo-line"><a href="https://opencctv-demo.codext.de">Try the live demo</a> with login <code>demo</code> / <code>demo</code>. Real cameras, real recordings, nothing to install.</p>
+
+      <figure class="stage">
+        <div class="browser">
+          <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span>opencctv.local:8080</span></div>
+          <img src="/assets/web-ui.png" width="2000" height="1050" alt="OpenCCTV web interface: live grid of nine cameras with recording indicators, a motion alert on the front door, a 24-hour timeline and a list of motion events uploaded to Google Drive and S3">
+        </div>
+        <div class="phone"><img src="/assets/hero-app.png" width="786" height="1704" alt="OpenCCTV iPhone app: live view of the home cameras, front door showing a motion alert"></div>
+        <figcaption>Web UI and iPhone app on the same server. Footage from the public demo.</figcaption>
+      </figure>
+    </section>
+
+    <section class="brands" aria-labelledby="brands-title">
+      <h2 id="brands-title">Works with the cameras you already own</h2>
+      <ul>
+        <li>TP-Link Tapo</li><li>UniFi Protect</li><li>Reolink</li><li>Hikvision</li><li>Dahua</li><li>Amcrest</li><li>Axis</li><li>eufy</li><li>Foscam</li><li>EZVIZ</li><li>Imou</li><li>Annke</li><li>Wyze</li><li class="any">any ONVIF camera</li><li class="any">any RTSP stream</li>
+      </ul>
+      <p>UniFi Protect cameras are imported in one step. eufy and Wyze need models or firmware with RTSP. Cameras that can only send video can push RTMP or RTSP to the server.</p>
+    </section>
+
+    <section id="features" aria-labelledby="features-title">
+      <div class="section-head">
+        <div class="kicker">Features</div>
+        <h2 id="features-title">Everything an NVR should do. Nothing phoning home.</h2>
+        <p>One binary or one container. Streaming by go2rtc, recording and motion detection by ffmpeg, uploads by rclone, glued together with a web UI and native apps.</p>
+      </div>
+      <ul class="features">
+        <li><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg></span><h3>Live view in under a second</h3><p>WebRTC with HLS fallback, HD and SD substreams, multi-camera grids in the app and the browser.</p></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5" fill="currentColor" stroke="none"/></svg></span><h3>24/7 or motion recording</h3><p>Continuous or motion-only per camera, with pre- and post-roll. Video is stored as the camera sends it, without re-encoding.</p></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18"/><path d="M7 8v8M12 6v12M17 9v6"/></svg></span><h3>Timeline playback</h3><p>Scrub through any day, jump from event to event and export a time range as MP4 to share.</p></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg></span><h3>Motion events and push</h3><p>Every event with snapshot, time and duration. Push notifications per camera, with a cooldown so a tree in the wind does not spam you.</p></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><h3>Two-way audio</h3><p>Hold to talk through the camera speaker on models that support it, Tapo included.</p></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 6.5l1.5 2h-3zM12 17.5l-1.5-2h3zM6.5 12l2-1.5v3zM17.5 12l-2 1.5v-3z" fill="currentColor"/></svg></span><h3>PTZ control</h3><p>Pan, tilt, zoom and presets over ONVIF, right from the app or the browser.</p></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18h10a4 4 0 0 0 .5-8A6 6 0 0 0 6 9.5 4.3 4.3 0 0 0 7 18z"/><path d="M12 15v-5M9.5 12.5L12 10l2.5 2.5"/></svg></span><h3>Cloud upload, auto-delete</h3><p>Nine storage types, several at once. Each target deletes footage after the number of days you set.</p></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM18 14h2.5M14 20.5h2"/></svg></span><h3>Pair by QR code</h3><p>Scan the code in the web UI and the app is connected. No typing server addresses or passwords on a phone.</p></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.6 2.4 14.4 0 17M12 3.5c-2.4 2.6-2.4 14.4 0 17"/></svg></span><h3>Remote access, no port forwarding</h3><p>Run a second OpenCCTV as a gateway on a VPS. Your home server dials out, nothing on your router opens.</p></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></span><h3>Finds your cameras</h3><p>ONVIF discovery and a LAN scan list the cameras on your network. The UniFi Protect import adds all of them at once.</p></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c1.8.7 3 2.4 3.5 5.2"/></svg></span><h3>Users and roles</h3><p>Admins configure, viewers watch. Every phone signs in with its own token instead of your password.</p></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg></span><h3>Runs where you want</h3><p>Linux, macOS, Windows or Docker on x64 and ARM64. A mini PC, a NAS or a small VPS is enough. Coolify-ready.</p></li>
+      </ul>
+    </section>
+
+    <section class="divider" aria-labelledby="apps-title">
+      <div class="section-head">
+        <div class="kicker">The apps</div>
+        <h2 id="apps-title">Made for the phone in your pocket.</h2>
+        <p>Native apps for iPhone and Android, free, without ads or in-app purchases. Face ID app lock, picture-in-picture, light and dark mode, English and German. They connect to your server and nothing else.</p>
+      </div>
+      <ul class="screens">
+        <li><figure><div class="phone"><img src="/assets/screens/camera.png" width="786" height="1704" loading="lazy" alt="Camera screen with live video, talk button and PTZ control"></div><figcaption><b>Live, talk, PTZ</b><span>WebRTC latency, two-way audio and presets.</span></figcaption></figure></li>
+        <li><figure><div class="phone"><img src="/assets/screens/timeline.png" width="786" height="1704" loading="lazy" alt="Timeline screen with day picker and motion events along the recording"></div><figcaption><b>Timeline</b><span>Scrub any day, jump between events.</span></figcaption></figure></li>
+        <li><figure><div class="phone"><img src="/assets/screens/events.png" width="786" height="1704" loading="lazy" alt="Events screen listing motion events with snapshots"></div><figcaption><b>Events</b><span>Every motion with snapshot, one tap to the clip.</span></figcaption></figure></li>
+        <li><figure><div class="phone"><img src="/assets/screens/storage.png" width="786" height="1704" loading="lazy" alt="Storage screen with local disk usage, Google Drive, S3 and NAS targets and retention settings"></div><figcaption><b>Storage</b><span>See where footage goes and for how long.</span></figcaption></figure></li>
+      </ul>
+    </section>
+
+    <section id="how" class="divider" aria-labelledby="how-title">
+      <div class="section-head">
+        <div class="kicker">How it works</div>
+        <h2 id="how-title">Camera, server, your storage. That is the whole path.</h2>
+        <p>OpenCCTV pulls the streams from your cameras inside your network, records them on the server and copies the recordings to the storage you choose. The apps talk to your server, never to us.</p>
+      </div>
+      <div class="flow">
+<!--SVG:flow-h--><svg class="h" viewBox="0 0 1100 362" role="img" aria-labelledby="flow-h-t">
+  <title id="flow-h-t">Cameras stream to the OpenCCTV server, which records them and uploads to your storage; apps and browsers connect to the server over LAN, gateway or VPN</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1l8 4-8 4" fill="none" stroke="#2DD4BF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <linearGradient id="srv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15201F"/><stop offset="1" stop-color="#101416"/></linearGradient>
+  </defs>
+  <g font-size="12" fill="#69717C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" letter-spacing=".04em">
+    <text x="0" y="28">YOUR CAMERAS</text><text x="330" y="28">YOUR SERVER</text><text x="820" y="28">YOUR STORAGE</text><text x="820" y="224">YOUR DEVICES</text>
+  </g>
+  <g class="lines" fill="none" stroke="#2DD4BF" stroke-width="1.6" stroke-opacity=".55">
+    <path d="M230 70 C 285 70, 280 140, 326 140" marker-end="url(#ah)"/>
+    <path d="M230 132 C 280 132, 280 168, 326 168" marker-end="url(#ah)"/>
+    <path d="M230 194 C 280 194, 280 196, 326 196" marker-end="url(#ah)"/>
+    <path d="M230 256 C 285 256, 280 224, 326 224" marker-end="url(#ah)"/>
+    <path d="M710 150 C 765 150, 760 66, 816 66" marker-end="url(#ah)"/>
+    <path d="M710 160 C 765 160, 760 116, 816 116" marker-end="url(#ah)"/>
+    <path d="M710 170 C 765 170, 760 166, 816 166" marker-end="url(#ah)"/>
+    <path d="M714 250 C 765 250, 760 262, 816 262" marker-start="url(#ah)" marker-end="url(#ah)"/>
+    <path d="M714 260 C 765 260, 760 312, 816 312" marker-start="url(#ah)" marker-end="url(#ah)"/>
+  </g>
+  <g font-size="15" font-weight="600" fill="#EEF1F4">
+    <g><rect x="0.5" y="42.5" width="229" height="55" rx="12" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="18" y="66">TP-Link Tapo C210</text><text x="18" y="86" font-size="12" font-weight="500" fill="#98A1AC">RTSP · camera account</text></g>
+    <g><rect x="0.5" y="104.5" width="229" height="55" rx="12" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="18" y="128">UniFi G4 Pro</text><text x="18" y="148" font-size="12" font-weight="500" fill="#98A1AC">Protect import · RTSPS</text></g>
+    <g><rect x="0.5" y="166.5" width="229" height="55" rx="12" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="18" y="190">Reolink RLC-823A</text><text x="18" y="210" font-size="12" font-weight="500" fill="#98A1AC">ONVIF · PTZ</text></g>
+    <g><rect x="0.5" y="228.5" width="229" height="55" rx="12" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="18" y="252">Doorbell or dashcam</text><text x="18" y="272" font-size="12" font-weight="500" fill="#98A1AC">pushes RTMP to the server</text></g>
+  </g>
+  <g>
+    <rect x="330.5" y="42.5" width="380" height="268" rx="18" fill="url(#srv)" stroke="rgba(45,212,191,.45)"/>
+    <image href="/assets/mark.svg" x="352" y="62" width="36" height="36"/>
+    <text x="400" y="80" font-size="18" font-weight="700" fill="#EEF1F4">OpenCCTV</text>
+    <text x="400" y="98" font-size="12" fill="#98A1AC">Docker · Linux · macOS · Windows</text>
+    <g font-size="13.5" font-weight="600" fill="#EEF1F4">
+      <rect x="350" y="122" width="340" height="38" rx="10" fill="rgba(255,255,255,.04)"/><text x="366" y="146">go2rtc</text><text x="450" y="146" font-weight="500" fill="#98A1AC">live view: WebRTC, HLS, RTSP</text>
+      <rect x="350" y="166" width="340" height="38" rx="10" fill="rgba(255,255,255,.04)"/><text x="366" y="190">ffmpeg</text><text x="450" y="190" font-weight="500" fill="#98A1AC">recording and motion detection</text>
+      <rect x="350" y="210" width="340" height="38" rx="10" fill="rgba(255,255,255,.04)"/><text x="366" y="234">rclone</text><text x="450" y="234" font-weight="500" fill="#98A1AC">upload and retention</text>
+      <rect x="350" y="254" width="340" height="38" rx="10" fill="rgba(255,255,255,.04)"/><text x="366" y="278">Web UI</text><text x="450" y="278" font-weight="500" fill="#98A1AC">API, pairing, gateway · :8080</text>
+    </g>
+  </g>
+  <g font-size="14.5" font-weight="600" fill="#EEF1F4">
+    <rect x="820.5" y="44.5" width="279" height="43" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="838" y="71">Local disk</text><text x="1082" y="71" font-size="12" font-weight="500" fill="#98A1AC" text-anchor="end">7 days</text>
+    <rect x="820.5" y="94.5" width="279" height="43" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="838" y="121">Google Drive</text><text x="1082" y="121" font-size="12" font-weight="500" fill="#98A1AC" text-anchor="end">30 days</text>
+    <rect x="820.5" y="144.5" width="279" height="43" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="838" y="171">S3 · SMB · SFTP …</text><text x="1082" y="171" font-size="12" font-weight="500" fill="#98A1AC" text-anchor="end">90 days</text>
+    <rect x="820.5" y="240.5" width="279" height="43" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="838" y="267">iPhone and Android</text>
+    <rect x="820.5" y="290.5" width="279" height="43" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="838" y="317">Browser</text><text x="1082" y="317" font-size="12" font-weight="500" fill="#98A1AC" text-anchor="end">:8080</text>
+    <text x="820" y="356" font-size="12" font-weight="500" fill="#69717C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">via LAN, gateway or VPN</text>
+  </g>
+</svg><!--/SVG-->
+<!--SVG:flow-v--><svg class="v" viewBox="0 0 360 700" role="img" aria-labelledby="flow-v-t">
+  <title id="flow-v-t">Cameras stream to the OpenCCTV server, which records them and uploads to your storage; apps and browsers connect to the server over LAN, gateway or VPN</title>
+  <defs>
+    <marker id="av" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1l8 4-8 4" fill="none" stroke="#2DD4BF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <linearGradient id="srv2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15201F"/><stop offset="1" stop-color="#101416"/></linearGradient>
+  </defs>
+  <g font-size="11" fill="#69717C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" letter-spacing=".04em">
+    <text x="0" y="14">YOUR CAMERAS</text><text x="0" y="214">YOUR SERVER</text><text x="0" y="494">YOUR STORAGE</text><text x="190" y="494">YOUR DEVICES</text>
+  </g>
+  <g font-size="13.5" font-weight="600" fill="#EEF1F4">
+    <rect x=".5" y="26.5" width="169" height="51" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="14" y="48">Tapo C210</text><text x="14" y="66" font-size="11" font-weight="500" fill="#98A1AC">RTSP</text>
+    <rect x="190.5" y="26.5" width="169" height="51" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="204" y="48">UniFi G4 Pro</text><text x="204" y="66" font-size="11" font-weight="500" fill="#98A1AC">Protect · RTSPS</text>
+    <rect x=".5" y="86.5" width="169" height="51" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="14" y="108">Reolink</text><text x="14" y="126" font-size="11" font-weight="500" fill="#98A1AC">ONVIF · PTZ</text>
+    <rect x="190.5" y="86.5" width="169" height="51" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="204" y="108">Doorbell or dashcam</text><text x="204" y="126" font-size="11" font-weight="500" fill="#98A1AC">pushes RTMP to the server</text>
+  </g>
+  <g fill="none" stroke="#2DD4BF" stroke-width="1.6" stroke-opacity=".55">
+    <path d="M85 138 C 85 170, 150 170, 150 222" marker-end="url(#av)"/>
+    <path d="M275 138 C 275 170, 210 170, 210 222" marker-end="url(#av)"/>
+    <path d="M140 450 C 140 475, 85 470, 85 506" marker-end="url(#av)"/>
+    <path d="M220 450 C 220 475, 275 470, 275 506" marker-start="url(#av)" marker-end="url(#av)"/>
+  </g>
+  <rect x=".5" y="226.5" width="359" height="222" rx="16" fill="url(#srv2)" stroke="rgba(45,212,191,.45)"/>
+  <image href="/assets/mark.svg" x="18" y="244" width="30" height="30"/>
+  <text x="58" y="258" font-size="16" font-weight="700" fill="#EEF1F4">OpenCCTV</text>
+  <text x="58" y="274" font-size="11" fill="#98A1AC">Docker · Linux · macOS · Windows</text>
+  <g font-size="12.5" font-weight="600" fill="#EEF1F4">
+    <rect x="16" y="290" width="328" height="34" rx="9" fill="rgba(255,255,255,.04)"/><text x="28" y="312">go2rtc</text><text x="92" y="312" font-weight="500" fill="#98A1AC">live view: WebRTC, HLS</text>
+    <rect x="16" y="330" width="328" height="34" rx="9" fill="rgba(255,255,255,.04)"/><text x="28" y="352">ffmpeg</text><text x="92" y="352" font-weight="500" fill="#98A1AC">recording, motion</text>
+    <rect x="16" y="370" width="328" height="34" rx="9" fill="rgba(255,255,255,.04)"/><text x="28" y="392">rclone</text><text x="92" y="392" font-weight="500" fill="#98A1AC">upload, retention</text>
+    <rect x="16" y="410" width="328" height="26" rx="9" fill="none"/><text x="28" y="428" font-size="11.5" font-weight="500" fill="#69717C">Web UI + API · :8080</text>
+  </g>
+  <g font-size="13" font-weight="600" fill="#EEF1F4">
+    <rect x=".5" y="510.5" width="169" height="41" rx="10" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="14" y="536">Local disk</text>
+    <rect x=".5" y="558.5" width="169" height="41" rx="10" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="14" y="584">Google Drive</text>
+    <rect x=".5" y="606.5" width="169" height="41" rx="10" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="14" y="632">S3 · SMB · SFTP …</text>
+    <rect x="190.5" y="510.5" width="169" height="41" rx="10" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="204" y="536">iPhone, Android</text>
+    <rect x="190.5" y="558.5" width="169" height="41" rx="10" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="204" y="584">Browser</text>
+    <text x="204" y="624" font-size="11" font-weight="500" fill="#69717C">via LAN, gateway or VPN</text>
+  </g>
+</svg><!--/SVG-->
+      </div>
+      <ol class="steps">
+        <li><h3>Install the server</h3><p>Docker, or one binary on Linux, macOS or Windows that starts on its own. Open port 8080 in a browser and create the admin account.</p></li>
+        <li><h3>Add your cameras</h3><p>Pick the brand, enter the camera account, test, save. Or let discovery and the UniFi import do it for you.</p></li>
+        <li><h3>Choose where footage goes</h3><p>Local disk, Google Drive, S3, a NAS or FTP, each with its own retention in days.</p></li>
+        <li><h3>Pair your phone</h3><p>Scan the QR code from the web UI. Live view, timeline and push notifications work right away.</p></li>
+      </ol>
+    </section>
+
+    <section id="remote" class="divider" aria-labelledby="remote-title">
+      <div class="split">
+        <div class="section-head">
+          <div class="kicker">Remote access</div>
+          <h2 id="remote-title">Watch from anywhere. Open no ports.</h2>
+          <p>Any OpenCCTV server can act as a gateway. Put one on a small VPS or in Coolify, link your home server once with a code, and the app reaches your cameras through an encrypted tunnel that your home server opens outbound.</p>
+          <ul class="checks">
+            <li><span><b>No port forwarding, no DynDNS.</b> Works behind CGNAT and LTE routers.</span></li>
+            <li><span><b>Several sites, one app.</b> Home, office and the holiday flat behind one gateway.</span></li>
+            <li><span><b>Your gateway, not ours.</b> It is the same open-source server, running on a machine you control.</span></li>
+            <li><span><b>Prefer a VPN?</b> Tailscale, WireGuard or your router's VPN work too. The app only needs a URL.</span></li>
+          </ul>
+        </div>
+        <div class="gw">
+<!--SVG:gateway--><svg viewBox="0 0 560 440" role="img" aria-labelledby="gw-t">
+  <title id="gw-t">The home server opens an outbound tunnel to a gateway on a VPS; the app connects to the gateway over HTTPS, so no ports are opened at home</title>
+  <defs>
+    <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1l8 4-8 4" fill="none" stroke="#2DD4BF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  </defs>
+  <!-- gateway -->
+  <rect x="140.5" y="16.5" width="279" height="80" rx="16" fill="#15201F" stroke="rgba(45,212,191,.45)"/>
+  <image href="/assets/mark.svg" x="160" y="38" width="34" height="34"/>
+  <text x="206" y="52" font-size="16" font-weight="700" fill="#EEF1F4">OpenCCTV gateway</text>
+  <text x="206" y="72" font-size="12" fill="#98A1AC" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">your VPS or Coolify</text>
+  <!-- home network -->
+  <rect x="10.5" y="196.5" width="330" height="230" rx="18" fill="none" stroke="rgba(255,255,255,.18)" stroke-dasharray="5 6"/>
+  <text x="30" y="226" font-size="12" fill="#69717C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" letter-spacing=".04em">YOUR HOME NETWORK</text>
+  <rect x="234" y="186" width="96" height="22" rx="11" fill="#0E1114" stroke="rgba(255,255,255,.18)"/>
+  <text x="282" y="201" font-size="11" font-weight="600" fill="#98A1AC" text-anchor="middle">no open ports</text>
+  <g font-size="12.5" font-weight="600" fill="#EEF1F4">
+    <rect x="30.5" y="244.5" width="90" height="36" rx="9" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="75" y="267" text-anchor="middle">Tapo</text>
+    <rect x="130.5" y="244.5" width="90" height="36" rx="9" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="175" y="267" text-anchor="middle">UniFi</text>
+    <rect x="230.5" y="244.5" width="90" height="36" rx="9" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="275" y="267" text-anchor="middle">Reolink</text>
+  </g>
+  <g fill="none" stroke="#2DD4BF" stroke-width="1.5" stroke-opacity=".4"><path d="M75 281v34M175 281v34M275 281v34"/></g>
+  <rect x="30.5" y="320.5" width="290" height="84" rx="14" fill="#13171B" stroke="rgba(255,255,255,.14)"/>
+  <image href="/assets/mark.svg" x="48" y="344" width="32" height="32"/>
+  <text x="92" y="357" font-size="15" font-weight="700" fill="#EEF1F4">OpenCCTV server</text>
+  <text x="92" y="376" font-size="12" fill="#98A1AC">records, uploads, stays home</text>
+  <!-- phone -->
+  <rect x="430.5" y="226.5" width="110" height="200" rx="22" fill="#13171B" stroke="rgba(255,255,255,.18)"/>
+  <rect x="466" y="236" width="38" height="9" rx="4.5" fill="#050607"/>
+  <rect x="442" y="256" width="86" height="48" rx="7" fill="#1E2A2A"/><rect x="442" y="310" width="41" height="26" rx="5" fill="#1A1F25"/><rect x="487" y="310" width="41" height="26" rx="5" fill="#1A1F25"/><rect x="442" y="340" width="41" height="26" rx="5" fill="#1A1F25"/><rect x="487" y="340" width="41" height="26" rx="5" fill="#1A1F25"/>
+  <circle cx="452" cy="266" r="3" fill="#FF5A5F"/>
+  <text x="485" y="396" font-size="12.5" font-weight="600" fill="#EEF1F4" text-anchor="middle">OpenCCTV app</text>
+  <text x="485" y="413" font-size="11" fill="#98A1AC" text-anchor="middle">on LTE, anywhere</text>
+  <!-- links -->
+  <g fill="none" stroke="#2DD4BF" stroke-width="1.8">
+    <path d="M321 352 C 392 352, 380 170, 352 100" marker-end="url(#ag)"/>
+    <path d="M485 224 C 485 150, 430 100, 424 72" marker-start="url(#ag)" marker-end="url(#ag)"/>
+  </g>
+  <g font-size="12" font-weight="600" fill="#2DD4BF">
+    <text x="398" y="300" transform="rotate(-90 398 300)">outbound tunnel (wss)</text>
+    <text x="478" y="140" text-anchor="end">HTTPS</text>
+  </g>
+</svg><!--/SVG-->
+        </div>
+      </div>
+    </section>
+
+    <section id="storage" class="divider" aria-labelledby="storage-title">
+      <div class="section-head">
+        <div class="kicker">Storage</div>
+        <h2 id="storage-title">Footage goes where you decide.</h2>
+        <p>Recordings land on the server's disk first. From there OpenCCTV uploads them to one or more targets and deletes them again after the number of days you set. Nothing is sent anywhere you did not configure.</p>
+      </div>
+      <ul class="targets">
+        <li><b>Local disk</b><span>Any folder, USB drive or mounted volume</span></li>
+        <li><b>Google Drive</b><span>Sign in once with your Google account</span></li>
+        <li><b>S3</b><span>AWS, Backblaze B2, Wasabi, Cloudflare R2, MinIO</span></li>
+        <li><b>SMB</b><span>Windows shares, Synology, QNAP</span></li>
+        <li><b>SFTP</b><span>Any server you can SSH into</span></li>
+        <li><b>FTP</b><span>Including routers like the FRITZ!Box</span></li>
+        <li><b>WebDAV</b><span>Nextcloud, ownCloud, Hetzner Storage Box</span></li>
+        <li><b>Dropbox</b><span>Personal and business accounts</span></li>
+        <li><b>OneDrive</b><span>Personal and Microsoft 365</span></li>
+        <li><b>Several at once</b><span>For example 7 days local, 30 in Drive, 90 in S3</span></li>
+      </ul>
+      <div class="retention">
+        <div><h3>Retention per target</h3><p>Each target cleans up after itself. Keep a week on the server and three months offsite.</p></div>
+        <div><h3>A disk that never fills up</h3><p>Set a maximum size for local footage. The oldest recordings go first, optionally right after upload.</p></div>
+        <div><h3>Playback from anywhere it lives</h3><p>The timeline plays recordings from the local disk or streams them back from remote storage.</p></div>
+      </div>
+    </section>
+
+    <section id="quick-start" class="divider" aria-labelledby="qs-title">
+      <div class="section-head">
+        <div class="kicker">Quick start</div>
+        <h2 id="qs-title">Running in a minute.</h2>
+        <p>Pick one. Each starts the server on port 8080 and keeps all data in one place: the <code>opencctv</code> volume in Docker, <code>~/.opencctv</code> on Linux and macOS, <code>%APPDATA%\OpenCCTV</code> on Windows.</p>
+      </div>
+      <div class="qs">
+        <div class="code wide">
+          <header><h3>Docker<small>recommended</small></h3><button class="copy" type="button" data-copy="docker">Copy</button></header>
+          <pre id="docker"><code>docker run -d --name opencctv --restart unless-stopped --network host -v opencctv:/data ghcr.io/codextde/opencctv:latest</code></pre>
+        </div>
+        <div class="code">
+          <header><h3>Linux and macOS</h3><button class="copy" type="button" data-copy="unix">Copy</button></header>
+          <pre id="unix"><code>curl -fsSL https://opencctv.codext.de/install.sh | sh</code></pre>
+        </div>
+        <div class="code">
+          <header><h3>Windows<small>PowerShell</small></h3><button class="copy" type="button" data-copy="win">Copy</button></header>
+          <pre id="win"><code>irm https://opencctv.codext.de/install.ps1 | iex</code></pre>
+        </div>
+        <div class="code wide">
+          <header><h3>Docker Compose<small>also works as a Coolify resource</small></h3><button class="copy" type="button" data-copy="compose">Copy</button></header>
+          <pre id="compose"><code>services:
+  opencctv:
+    image: ghcr.io/codextde/opencctv:latest
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - opencctv:/data
+volumes:
+  opencctv:</code></pre>
+        </div>
+      </div>
+      <ol class="after">
+        <li><b>Open <code>http://&lt;server-ip&gt;:8080</code></b> and create the admin account.</li>
+        <li><b>Add cameras.</b> Choose the brand, enter the camera's login, test and save.</li>
+        <li><b>Install the app</b> and scan the pairing QR code under Users &amp; devices.</li>
+      </ol>
+      <p class="demo-line" style="text-align:left">Host networking lets ONVIF discovery and WebRTC work without port mappings. The installers download the latest release from <a href="https://github.com/codextde/opencctv/releases">GitHub</a> and set it up to start automatically with systemd, launchd or the Windows Task Scheduler. Read <a href="/install.sh">install.sh</a> or <a href="/install.ps1">install.ps1</a> before you run them.</p>
+    </section>
+
+    <section id="faq" class="divider" aria-labelledby="faq-title">
+      <div class="section-head">
+        <div class="kicker">FAQ</div>
+        <h2 id="faq-title">Questions self-hosters ask.</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>My Tapo camera has no SD card. Does it work?</summary>
+          <div>
+            <p>Yes. OpenCCTV records the camera's live stream, so neither an SD card nor Tapo Care is needed. You only have to create a camera account once:</p>
+            <ol>
+              <li>In the Tapo app, open the camera and tap the gear icon.</li>
+              <li>Go to Advanced Settings, then Camera Account, and set a username and password. This is not your TP-Link ID.</li>
+              <li>In OpenCCTV, add a camera, choose TP-Link Tapo and enter the IP address and that account.</li>
+            </ol>
+            <p>PTZ models like the C200, C210 and C500 are controlled over ONVIF. For two-way audio, optionally add your TP-Link cloud password.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Is it really free?</summary>
+          <div><p>Yes. The server and the apps are open source under the MIT license. There is no paid tier, no camera limit and no feature behind a paywall. You pay only for the hardware and the storage you choose. Codext GmbH builds OpenCCTV in the open on <a href="https://github.com/codextde/opencctv">GitHub</a>; issues and pull requests are welcome.</p></div>
+        </details>
+        <details>
+          <summary>Does video leave my network?</summary>
+          <div>
+            <p>Only to the storage targets you configure and to your own devices when you watch. There is no OpenCCTV cloud. Codext receives no video, no snapshots and no metadata.</p>
+            <p>If you turn on push notifications, your server sends the notification (camera name and time) through Expo's push service to Apple or Google so it can reach your phone. Snapshots and video are not part of it.</p>
+          </div>
+        </details>
+        <details>
+          <summary>How do I watch my cameras when I'm away?</summary>
+          <div>
+            <p>Two options, neither needs port forwarding:</p>
+            <ul>
+              <li><strong>Gateway:</strong> run a second OpenCCTV on a VPS or in Coolify and link your home server to it. The home server keeps an outbound tunnel open; the app connects to the gateway.</li>
+              <li><strong>VPN:</strong> Tailscale, WireGuard or your router's VPN. Add the server's VPN address in the app.</li>
+            </ul>
+            <p>A reverse proxy with HTTPS in front of the server works as well, if you prefer to open a port.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Which cameras are supported?</summary>
+          <div>
+            <p>Anything that offers RTSP, RTSPS, ONVIF, HTTP MJPEG or can push RTMP/RTSP. The brands listed above have presets that fill in stream paths for you. Cloud-only cameras such as Ring, Arlo, Blink or Nest do not offer a local stream and do not work. Some battery cameras only stream while RTSP is active and drain faster.</p>
+          </div>
+        </details>
+        <details>
+          <summary>What hardware do I need?</summary>
+          <div>
+            <p>Any always-on x64 or ARM64 machine with enough disk. Because recordings are stored without re-encoding and motion detection looks at a small, low-frame-rate copy of the stream, the CPU load per camera is low.</p>
+            <p>For disk space, a 2K camera at about 2 Mbit/s needs roughly 21 GB per day of 24/7 recording. Motion-only recording usually needs a fraction of that.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Can I keep using UniFi Protect?</summary>
+          <div><p>Yes. The import logs into your console, enables RTSP on the cameras and adds them to OpenCCTV. Protect keeps working; OpenCCTV simply records a second copy where you want it, for example in Google Drive or S3, and gives you an app that works without a Ubiquiti account.</p></div>
+        </details>
+        <details>
+          <summary>Do I need an account with you?</summary>
+          <div><p>No. You create the admin account on your own server. The apps store only the address of your server and an access token on the phone. We do not know who uses OpenCCTV.</p></div>
+        </details>
+      </div>
+      <p class="demo-line" style="text-align:left;margin-top:28px">More answers on the <a href="/support/">support page</a>.</p>
+    </section>
+
+    <section class="cta divider" aria-labelledby="cta-title">
+      <h2 id="cta-title">See it before you install it.</h2>
+      <p>The demo server runs several cameras with real recordings and motion events. Log in with <code>demo</code> / <code>demo</code>, or point the app at it.</p>
+      <div class="actions">
+        <a class="btn accent" href="https://opencctv-demo.codext.de">Open the live demo</a>
+        <a class="btn ghost" href="https://github.com/codextde/opencctv">Star on GitHub</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="who"><b>OpenCCTV</b><span>© 2026 Codext GmbH · MIT licensed</span></div>
+    <nav aria-label="Footer">
+      <a href="https://github.com/codextde/opencctv">GitHub</a>
+      <a href="/support/">Support</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/imprint/">Imprint</a>
+      <a href="/impressum/" hreflang="de" lang="de">Impressum</a>
+      <a href="/datenschutz/" hreflang="de" lang="de">Datenschutz</a>
+      <a href="/de/" hreflang="de" lang="de">Deutsch</a>
+    </nav>
+  </footer>
+</div>
+<script src="/assets/site.js" defer></script>
+</body>
+</html>

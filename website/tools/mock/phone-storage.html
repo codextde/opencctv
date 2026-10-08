@@ -1,0 +1,51 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="mock.css"><link rel="stylesheet" href="phone.css">
+<style>
+.nav { display: flex; align-items: center; gap: 12px; padding: 4px 16px 6px; }
+.nav h1 { font-size: 28px; font-weight: 750; letter-spacing: -.03em; padding: 8px 4px 0; }
+.disk { padding: 16px; }
+.disk .row { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+.disk .row b { color: var(--ink); font-weight: 650; }
+.disk .big { font-size: 26px; font-weight: 750; letter-spacing: -.02em; margin: 4px 0 12px; }
+.disk .big small { font-size: 14px; color: var(--muted); font-weight: 550; }
+.bar { height: 8px; border-radius: 4px; background: var(--raised); overflow: hidden; display: flex; margin-bottom: 12px; }
+.bar i { height: 100%; }
+.t { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 13px 14px; }
+.t + .t { border-top: 1px solid var(--line); }
+.t .ic { width: 40px; height: 40px; border-radius: 12px; background: var(--raised); display: grid; place-items: center; color: var(--accent2); }
+.t strong { display: block; font-size: 14.5px; font-weight: 650; }
+.t small { display: block; font-size: 12px; color: var(--muted); }
+.t .ok { font-size: 11px; font-weight: 650; color: var(--accent2); background: var(--accent-soft); padding: 2px 8px; border-radius: 999px; }
+.t .q { color: var(--motion); background: var(--motion-soft); }
+.set { padding: 4px 14px; }
+.set div { display: flex; justify-content: space-between; padding: 12px 0; font-size: 14.5px; font-weight: 550; }
+.set div + div { border-top: 1px solid var(--line); }
+.set span { color: var(--muted); font-weight: 500; }
+.tog { width: 44px; height: 26px; border-radius: 13px; background: var(--accent); position: relative; }
+.tog::after { content: ""; position: absolute; right: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; }
+.add { margin-top: 12px; text-align: center; padding: 13px; border-radius: 14px; border: 1px dashed var(--line2); color: var(--accent2); font-weight: 650; font-size: 14px; }
+</style></head><body>
+<div class="status"></div>
+<div class="nav"><h1>Storage</h1></div>
+<div class="content">
+  <div class="card disk">
+    <div class="row"><span>This server · /data</span><b>30-day retention</b></div>
+    <div class="big">314 GB <small>of 500 GB used</small></div>
+    <div class="bar"><i style="width:48%;background:var(--accent)"></i><i style="width:15%;background:#3B82F6"></i></div>
+    <div class="row"><span>Recordings 241 GB · Events 73 GB</span><span>186 GB free</span></div>
+  </div>
+  <div class="label">Upload targets</div>
+  <div class="card">
+    <div class="t"><span class="ic"><i data-i="cloud"></i></span><div><strong>Google Drive</strong><small>OpenCCTV/Home · 412 GB · 30 days</small></div><span class="ok">Synced</span></div>
+    <div class="t"><span class="ic"><i data-i="bucket"></i></span><div><strong>Backblaze B2 (S3)</strong><small>cctv-archive · 90 days</small></div><span class="ok">Synced</span></div>
+    <div class="t"><span class="ic"><i data-i="server"></i></span><div><strong>Synology NAS (SMB)</strong><small>\\nas\surveillance · 14 days</small></div><span class="ok q">3 queued</span></div>
+  </div>
+  <div class="add">+ Add storage</div>
+  <div class="label">Retention</div>
+  <div class="card set">
+    <div>Keep on this server<span>7 days</span></div>
+    <div>Delete local copy after upload<span class="tog"></span></div>
+    <div>Max local size<span>400 GB</span></div>
+  </div>
+</div>
+<div class="tabs" data-on="Settings"></div>
+<script src="icons.js"></script></body></html>

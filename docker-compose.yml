@@ -1,0 +1,35 @@
+# OpenCCTV - camera server, NVR and remote gateway
+#   docker compose up -d        then open http://<host>:8080
+#
+# Networking: ONVIF discovery (WS-Discovery multicast) and WebRTC work best with host networking,
+# which is enabled below (Linux only). On Docker Desktop (macOS/Windows), or if you prefer port
+# mapping, remove "network_mode: host" and uncomment the "ports" section. Everything except
+# automatic camera discovery keeps working with mapped ports.
+services:
+  opencctv:
+    image: ghcr.io/codextde/opencctv:latest
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: opencctv
+    restart: unless-stopped
+    network_mode: host
+    # ports:
+    #   - "8080:8080"          # web UI + API
+    #   - "8554:8554"          # RTSP (only needed for cameras that push RTSP)
+    #   - "1935:1935"          # RTMP (only needed for cameras that push RTMP)
+    #   - "8555:8555/tcp"      # WebRTC
+    #   - "8555:8555/udp"      # WebRTC
+    volumes:
+      - ./data:/data                     # database, recordings, config
+      # - /mnt/nas/cctv:/mnt/nas/cctv    # optional: extra folder for a "Local folder" storage target
+    environment:
+      TZ: Europe/Berlin
+      # OPENCCTV_PORT: "8080"
+      # OPENCCTV_PUBLIC_URL: "https://cctv.example.com"   # when behind a reverse proxy
+      # OPENCCTV_ADMIN_USER: "admin"                      # create the first admin without the setup screen
+      # OPENCCTV_ADMIN_PASSWORD: "change-me"
+      # OPENCCTV_WEBRTC_CANDIDATES: "203.0.113.10:8555"   # public IP for WebRTC behind NAT
+      # OPENCCTV_GOOGLE_CLIENT_ID: ""                     # Google Drive device flow (TV / limited input client)
+      # OPENCCTV_GOOGLE_CLIENT_SECRET: ""
+      # OPENCCTV_DEMO: "1"                                # demo cameras from bundled clips

@@ -1,0 +1,22 @@
+appId: de.codext.opencctv
+---
+- stopApp
+- openLink: ${LINK}
+- runFlow:
+    when:
+      true: ${WAIT_ID != ''}
+    commands:
+      - extendedWaitUntil:
+          visible:
+            id: ${WAIT_ID}
+          timeout: 45000
+- runFlow:
+    when:
+      true: ${WAIT_TEXT != ''}
+    commands:
+      - extendedWaitUntil:
+          visible: ${WAIT_TEXT}
+          timeout: 45000
+- waitForAnimationToEnd:
+    timeout: ${SETTLE}
+- takeScreenshot: ${OUT}/${NAME}

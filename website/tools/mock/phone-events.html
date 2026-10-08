@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="mock.css"><link rel="stylesheet" href="phone.css">
+<style>
+.list { display: grid; gap: 10px; }
+.e { display: grid; grid-template-columns: 128px 1fr; gap: 12px; align-items: center; padding: 8px; }
+.e .cam { height: 72px; border-radius: 10px; }
+.e .cam::after { content: ""; position: absolute; inset: 0; }
+.e strong { display: block; font-size: 14.5px; font-weight: 650; }
+.e small { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+.e em { display: inline-block; font-style: normal; margin-top: 6px; font-size: 10.5px; font-weight: 650; padding: 1px 7px; border-radius: 999px; color: var(--accent2); background: var(--accent-soft); }
+.e em.m { color: var(--motion); background: var(--motion-soft); }
+.e .new { position: absolute; }
+</style></head><body>
+<div class="status"></div>
+<div class="content">
+  <div class="title"><div><h1>Events</h1><div class="srv">Motion on 9 cameras</div></div><span class="round"><i data-i="filter"></i></span></div>
+  <div class="chips"><span class="on">All cameras</span><span>Front door</span><span>Backyard</span><span>Shop</span></div>
+  <div class="label" style="margin-top:4px">Today</div>
+  <div class="list">
+    <div class="card e"><div class="cam"><img src="frames/front-door-6.jpg"></div><div><strong>Front door</strong><small>14:31:52 · 18 s</small><em class="m">New</em></div></div>
+    <div class="card e"><div class="cam"><img src="frames/shop-entrance-6.jpg"></div><div><strong>Shop entrance</strong><small>14:02:10 · 41 s</small><em>Google Drive</em></div></div>
+    <div class="card e"><div class="cam"><img src="frames/backyard-6.jpg"></div><div><strong>Backyard</strong><small>13:47:33 · 12 s</small><em>Google Drive</em></div></div>
+  </div>
+  <div class="label">Yesterday</div>
+  <div class="list">
+    <div class="card e"><div class="cam"><img src="frames/street-3.jpg"></div><div><strong>Driveway</strong><small>22:48:05 · 33 s</small><em>S3 · Backblaze</em></div></div>
+    <div class="card e"><div class="cam"><img src="frames/bakery-6.jpg"></div><div><strong>Bakery</strong><small>19:20:41 · 27 s</small><em>S3 · Backblaze</em></div></div>
+  </div>
+</div>
+<div class="tabs" data-on="Events"></div>
+<script src="icons.js"></script></body></html>

@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="mock.css"><link rel="stylesheet" href="phone.css">
+<style>
+.video { height: 221px; border-radius: 0; }
+.video .ov { padding: 12px 14px; }
+.ts { font-size: 13px; font-weight: 650; color: #fff; }
+.days { display: flex; gap: 8px; padding: 14px 16px 6px; }
+.days span { flex: 1; text-align: center; padding: 8px 0; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); font-size: 11px; font-weight: 600; }
+.days span b { display: block; font-size: 17px; color: var(--ink); font-weight: 700; }
+.days .on { background: var(--accent-soft); border-color: rgba(45,212,191,.35); color: var(--accent2); }
+.days .on b { color: var(--accent2); }
+.days .off b { color: var(--dim); }
+.scrub { position: relative; margin: 14px 0 0; height: 300px; display: grid; grid-template-columns: 56px 1fr; }
+.hours { display: flex; flex-direction: column; justify-content: space-between; font-size: 11px; color: var(--dim); text-align: right; padding: 0 10px 0 0; font-variant-numeric: tabular-nums; }
+.lane { position: relative; margin-right: 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); overflow: hidden; }
+.lane .rng { position: absolute; left: 10px; width: 10px; border-radius: 5px; background: rgba(20,184,166,.5); }
+.ev { position: absolute; left: 32px; right: 10px; height: 46px; display: grid; grid-template-columns: 74px 1fr; gap: 10px; align-items: center; }
+.ev .cam { height: 42px; border-radius: 7px; }
+.ev strong { display: block; font-size: 12.5px; font-weight: 650; }
+.ev small { display: block; font-size: 11px; color: var(--muted); }
+.ev::before { content: ""; position: absolute; left: -16px; top: 18px; width: 10px; height: 10px; border-radius: 50%; background: var(--motion); box-shadow: 0 0 0 3px var(--surface); }
+.head { position: absolute; left: 0; right: 0; height: 2px; background: var(--accent2); }
+.head::before { content: "13:47:33"; position: absolute; right: 8px; top: -22px; font-size: 11px; font-weight: 700; color: #03201C; background: var(--accent2); padding: 2px 7px; border-radius: 6px; }
+.ctl { display: flex; justify-content: center; gap: 12px; margin-top: 14px; }
+.ctl span { padding: 8px 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); font-size: 12.5px; font-weight: 650; display: inline-flex; gap: 6px; align-items: center; }
+.ctl .on { background: var(--accent); color: #03201C; border-color: transparent; }
+</style></head><body>
+<div class="status"></div>
+<div class="cam video"><img src="frames/backyard-6.jpg"><div class="ov"><div class="top"><span>Backyard</span><span class="pill">Recording · Drive</span></div><div class="bot"><span class="ts">Wed 8 Oct · 13:47:33</span><span>1×</span></div></div></div>
+<div class="days"><span>Sun<b>5</b></span><span>Mon<b>6</b></span><span>Tue<b>7</b></span><span class="on">Today<b>8</b></span><span class="off">Thu<b>9</b></span></div>
+<div class="scrub">
+  <div class="hours"><span>15:00</span><span>14:00</span><span>13:00</span><span>12:00</span><span>11:00</span></div>
+  <div class="lane">
+    <span class="rng" style="top:14%;bottom:0"></span>
+    <div class="ev" style="top:6%"><div class="cam"><img src="frames/front-door-6.jpg"></div><div><strong>Front door</strong><small>14:31 · 18 s</small></div></div>
+    <div class="ev" style="top:27%"><div class="cam"><img src="frames/shop-entrance-6.jpg"></div><div><strong>Shop entrance</strong><small>14:02 · 41 s</small></div></div>
+    <div class="ev" style="top:47%"><div class="cam"><img src="frames/backyard-6.jpg"></div><div><strong>Backyard</strong><small>13:47 · 12 s</small></div></div>
+    <div class="ev" style="top:78%"><div class="cam"><img src="frames/storefront-3.jpg"></div><div><strong>Storefront</strong><small>12:15 · 26 s</small></div></div>
+    <span class="head" style="top:45%"></span>
+  </div>
+</div>
+<div class="ctl"><span>−10 s</span><span class="on"><i data-i="play" style="width:14px;height:14px"></i>Play</span><span>+10 s</span><span>Export clip</span></div>
+<div class="tabs" data-on="Timeline"></div>
+<script src="icons.js"></script></body></html>

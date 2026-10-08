@@ -1,0 +1,32 @@
+# Public demo / gateway instance on Coolify (https://opencctv-demo.codext.de)
+# Coolify: Docker Compose build pack, Base Directory "/deploy/coolify", Docker Compose Location "/docker-compose.yml".
+# The build context is the repository root (../..). OPENCCTV_ADMIN_PASSWORD is required; it creates the admin
+# account on first start only (later changes: opencctv reset-password admin <new> inside the container).
+# Visitors can sign in read-only with demo / demo.
+services:
+  opencctv:
+    build:
+      context: ../..
+      dockerfile: server/Dockerfile
+    restart: unless-stopped
+    environment:
+      - SERVICE_FQDN_OPENCCTV_8080
+      - TZ=Europe/Berlin
+      - OPENCCTV_PORT=8080
+      - OPENCCTV_PUBLIC_URL=${OPENCCTV_PUBLIC_URL:-https://opencctv-demo.codext.de}
+      - OPENCCTV_DEMO=${OPENCCTV_DEMO:-1}
+      - OPENCCTV_ADMIN_USER=${OPENCCTV_ADMIN_USER:-admin}
+      - OPENCCTV_ADMIN_PASSWORD=${OPENCCTV_ADMIN_PASSWORD:?}
+      - OPENCCTV_WEBRTC_CANDIDATES=${OPENCCTV_WEBRTC_CANDIDATES:-}
+    ports:
+      - "8555:8555/tcp"
+      - "8555:8555/udp"
+    volumes:
+      - opencctv-data:/data
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/opencctv", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+volumes:
+  opencctv-data:

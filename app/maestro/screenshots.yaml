@@ -1,0 +1,62 @@
+appId: de.codext.opencctv
+name: Store screenshots
+---
+- runFlow:
+    file: shot.yaml
+    env:
+      LINK: opencctv://shots?reset=1&lang=${APP_LANG}
+      WAIT_ID: screen-welcome
+      WAIT_TEXT: ""
+      SETTLE: "3000"
+      NAME: 01-welcome
+
+- runFlow:
+    file: shot.yaml
+    env:
+      LINK: opencctv://shots?server=${SERVER}&user=${USER}&pass=${PASS}&lang=${APP_LANG}&go=/
+      WAIT_TEXT: ".*Storefront.*"
+      WAIT_ID: ""
+      SETTLE: "3000"
+      NAME: 02-live
+
+- runFlow:
+    file: live.yaml
+    env:
+      LINK: opencctv://shots?server=${SERVER}&user=${USER}&pass=${PASS}&lang=${APP_LANG}&go=/camera/demo-storefront
+      NAME: 03-fullscreen
+
+- runFlow:
+    file: shot.yaml
+    env:
+      LINK: opencctv://shots?server=${SERVER}&user=${USER}&pass=${PASS}&lang=${APP_LANG}&go=/playback
+      WAIT_ID: playback-playing
+      WAIT_TEXT: ""
+      SETTLE: "3000"
+      NAME: 04-playback
+
+- runFlow:
+    file: shot.yaml
+    env:
+      LINK: opencctv://shots?server=${SERVER}&user=${USER}&pass=${PASS}&lang=${APP_LANG}&go=/events
+      WAIT_TEXT: "Backyard.*"
+      WAIT_ID: ""
+      SETTLE: "3000"
+      NAME: 05-events
+
+- runFlow:
+    file: shot.yaml
+    env:
+      LINK: opencctv://shots?server=${SERVER}&user=${USER}&pass=${PASS}&lang=${APP_LANG}&go=/manage/add-camera
+      WAIT_TEXT: ".*Reolink.*"
+      SETTLE: "9000"
+      WAIT_ID: ""
+      NAME: 06-add-camera
+
+- runFlow:
+    file: shot.yaml
+    env:
+      LINK: opencctv://shots?server=${SERVER}&user=${USER}&pass=${PASS}&lang=${APP_LANG}&go=/manage/storage
+      WAIT_TEXT: ".*NAS backup.*"
+      WAIT_ID: ""
+      SETTLE: "3000"
+      NAME: 07-storage

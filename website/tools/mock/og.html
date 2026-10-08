@@ -1,0 +1,35 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="mock.css">
+<style>
+body { width: 1200px; height: 630px; overflow: hidden; position: relative; background: radial-gradient(900px 500px at 85% 40%, rgba(20,184,166,.16), transparent 60%), #0B0D10; }
+.txt { position: absolute; left: 72px; top: 70px; width: 560px; }
+.brand { display: flex; align-items: center; gap: 14px; font-size: 30px; font-weight: 720; letter-spacing: -.02em; }
+.brand img { width: 46px; height: 46px; }
+h1 { margin-top: 64px; font-size: 64px; line-height: 1.04; font-weight: 760; letter-spacing: -.04em; }
+h1 span { color: #98A0AA; }
+p { margin-top: 26px; font-size: 23px; line-height: 1.45; color: #98A0AA; }
+.foot { position: absolute; left: 72px; bottom: 56px; display: flex; gap: 10px; font-size: 17px; font-weight: 600; color: #cfd5db; }
+.foot span { padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,.12); }
+.foot .a { color: #2DD4BF; border-color: rgba(45,212,191,.35); background: rgba(45,212,191,.08); }
+.wall { position: absolute; right: -70px; top: -30px; width: 600px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; transform: rotate(-6deg); }
+.wall .cam { aspect-ratio: 16/10; border-radius: 14px; box-shadow: 0 20px 40px rgba(0,0,0,.45); }
+.wall .cam .top { font-size: 14px; }
+.fade { position: absolute; inset: 0; background: linear-gradient(90deg, #0B0D10 46%, rgba(11,13,16,.0) 64%); pointer-events: none; }
+</style></head><body>
+<div class="wall">
+  <div class="cam"><img src="frames/front-door-6.jpg"><div class="ov"><div class="top"><span>Front door</span><span class="pill mot">MOTION</span></div><div></div></div></div>
+  <div class="cam"><img src="frames/backyard-3.jpg"><div class="ov"><div class="top"><span>Backyard</span><span class="pill rec">REC</span></div><div></div></div></div>
+  <div class="cam"><img src="frames/street-6.jpg"><div class="ov"><div class="top"><span>Street</span><span class="pill rec">REC</span></div><div></div></div></div>
+  <div class="cam"><img src="frames/parking-deck-3.jpg"><div class="ov"><div class="top"><span>Garage</span><span class="pill rec">REC</span></div><div></div></div></div>
+  <div class="cam"><img src="frames/shop-entrance-3.jpg"><div class="ov"><div class="top"><span>Shop</span><span class="pill rec">REC</span></div><div></div></div></div>
+  <div class="cam"><img src="frames/bakery-3.jpg"><div class="ov"><div class="top"><span>Bakery</span><span class="pill rec">REC</span></div><div></div></div></div>
+  <div class="cam"><img src="frames/storefront-3.jpg"><div class="ov"><div class="top"><span>Storefront</span><span class="pill rec">REC</span></div><div></div></div></div>
+  <div class="cam"><img src="frames/garage-6.jpg"><div class="ov"><div class="top"><span>Workshop</span><span class="pill rec">REC</span></div><div></div></div></div>
+</div>
+<div class="fade"></div>
+<div class="txt">
+  <div class="brand"><img src="../../public/assets/mark.svg" alt="">OpenCCTV</div>
+  <h1>Your cameras.<br>Your server.<br><span>Your storage.</span></h1>
+  <p>Free, open-source NVR with iPhone and Android apps. Tapo, UniFi, Reolink and any RTSP or ONVIF camera.</p>
+</div>
+<div class="foot"><span class="a">MIT licensed</span><span>Docker · Linux · macOS · Windows</span></div>
+</body></html>

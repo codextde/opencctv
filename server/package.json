@@ -1,0 +1,27 @@
+{
+  "name": "opencctv-server",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts serve",
+    "start": "bun src/index.ts serve",
+    "demo": "OPENCCTV_DEMO=1 bun src/index.ts serve",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "build": "bun run scripts/build.ts",
+    "build:local": "bun build --compile --minify --define process.env.NODE_ENV=\"production\" src/index.ts --outfile dist/opencctv"
+  },
+  "dependencies": {
+    "qrcode-generator": "^1.4.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "typescript": "^5.9.0"
+  }
+}

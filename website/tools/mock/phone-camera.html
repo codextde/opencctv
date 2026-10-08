@@ -1,0 +1,51 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="mock.css"><link rel="stylesheet" href="phone.css">
+<style>
+.nav { display: flex; align-items: center; justify-content: space-between; padding: 4px 16px 12px; }
+.nav h1 { font-size: 17px; font-weight: 700; text-align: center; }
+.nav small { display: block; color: var(--muted); font-size: 12px; font-weight: 500; text-align: center; }
+.video { height: 221px; border-radius: 0; }
+.video .ov { padding: 12px 14px; }
+.live { display: inline-flex; align-items: center; gap: 6px; background: var(--rec); color: #fff; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px; letter-spacing: .04em; }
+.meta { display: flex; gap: 6px; }
+.actions { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding: 16px; }
+.actions span { display: flex; flex-direction: column; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); font-weight: 550; }
+.actions b { width: 54px; height: 54px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); display: grid; place-items: center; color: var(--ink); }
+.actions .talk b { background: var(--accent); color: #03201C; border-color: transparent; }
+.ptz { margin: 4px 16px 0; padding: 16px; display: grid; grid-template-columns: 150px 1fr; gap: 16px; align-items: center; }
+.pad { position: relative; width: 150px; height: 150px; border-radius: 50%; background: var(--sunken); border: 1px solid var(--line); }
+.pad i { position: absolute; width: 0; height: 0; border: 7px solid transparent; }
+.pad .u { top: 14px; left: 68px; border-bottom: 9px solid var(--muted); border-top: 0; }
+.pad .d { bottom: 14px; left: 68px; border-top: 9px solid var(--muted); border-bottom: 0; }
+.pad .l { left: 14px; top: 68px; border-right: 9px solid var(--muted); border-left: 0; }
+.pad .r { right: 14px; top: 68px; border-left: 9px solid var(--muted); border-right: 0; }
+.pad .c { position: absolute; inset: 47px; border-radius: 50%; background: var(--raised); border: 1px solid var(--line2); }
+.presets h3 { font-size: 13px; font-weight: 650; color: var(--muted); margin-bottom: 8px; }
+.presets .ps { display: grid; gap: 6px; }
+.presets span { background: var(--raised); border-radius: 10px; padding: 8px 10px; font-size: 13px; font-weight: 600; }
+.zoom { display: flex; gap: 6px; margin-top: 10px; }
+.zoom span { flex: 1; text-align: center; background: var(--raised); border-radius: 10px; padding: 7px 0; font-weight: 700; }
+.mini { margin: 12px 16px 0; padding: 12px 14px; }
+.mini .h { display: flex; justify-content: space-between; font-size: 13px; font-weight: 650; margin-bottom: 10px; }
+.mini .h span { color: var(--muted); font-weight: 500; }
+.track { position: relative; height: 22px; border-radius: 6px; background: var(--sunken); overflow: hidden; }
+.track i { position: absolute; top: 0; bottom: 0; background: rgba(20,184,166,.24); }
+.track b { position: absolute; top: 4px; bottom: 4px; width: 3px; border-radius: 2px; background: var(--motion); }
+</style></head><body>
+<div class="status"></div>
+<div class="nav"><span class="round"><i data-i="back"></i></span><div><h1>Front door</h1><small>Tapo C120 · 2560×1440 · H.264</small></div><span class="round"><i data-i="gear"></i></span></div>
+<div class="cam video"><img src="frames/front-door-6.jpg"><div class="ov"><div class="top"><span class="live">LIVE</span><span class="meta"><span class="pill">WebRTC · 180 ms</span></span></div><div class="bot"><span>HD</span><span><i data-i="full"></i></span></div></div></div>
+<div class="actions">
+  <span><b><i data-i="snap"></i></b>Snapshot</span>
+  <span><b><i data-i="rec"></i></b>Clip</span>
+  <span class="talk"><b><i data-i="mic"></i></b>Talk</span>
+  <span><b><i data-i="spk"></i></b>Sound</span>
+  <span><b><i data-i="pip"></i></b>PiP</span>
+</div>
+<div class="card ptz">
+  <div class="pad"><i class="u"></i><i class="d"></i><i class="l"></i><i class="r"></i><span class="c"></span></div>
+  <div class="presets"><h3>Presets</h3><div class="ps"><span>Door</span><span>Driveway</span><span>Mailbox</span></div><div class="zoom"><span>−</span><span>+</span></div></div>
+</div>
+<div class="card mini"><div class="h">Today<span>7 motion events</span></div>
+  <div class="track"><i style="left:0;width:60.5%"></i><b style="left:8%"></b><b style="left:19%"></b><b style="left:22%"></b><b style="left:41%"></b><b style="left:57%"></b><b style="left:59.5%"></b></div>
+</div>
+<i class="home"></i><script src="icons.js"></script></body></html>

@@ -1,0 +1,47 @@
+<svg class="h" viewBox="0 0 1100 362" role="img" aria-labelledby="flow-h-t">
+  <title id="flow-h-t">{{flowTitle}}</title>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1l8 4-8 4" fill="none" stroke="#2DD4BF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <linearGradient id="srv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15201F"/><stop offset="1" stop-color="#101416"/></linearGradient>
+  </defs>
+  <g font-size="12" fill="#69717C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" letter-spacing=".04em">
+    <text x="0" y="28">{{cameras}}</text><text x="330" y="28">{{server}}</text><text x="820" y="28">{{storage}}</text><text x="820" y="224">{{devices}}</text>
+  </g>
+  <g class="lines" fill="none" stroke="#2DD4BF" stroke-width="1.6" stroke-opacity=".55">
+    <path d="M230 70 C 285 70, 280 140, 326 140" marker-end="url(#ah)"/>
+    <path d="M230 132 C 280 132, 280 168, 326 168" marker-end="url(#ah)"/>
+    <path d="M230 194 C 280 194, 280 196, 326 196" marker-end="url(#ah)"/>
+    <path d="M230 256 C 285 256, 280 224, 326 224" marker-end="url(#ah)"/>
+    <path d="M710 150 C 765 150, 760 66, 816 66" marker-end="url(#ah)"/>
+    <path d="M710 160 C 765 160, 760 116, 816 116" marker-end="url(#ah)"/>
+    <path d="M710 170 C 765 170, 760 166, 816 166" marker-end="url(#ah)"/>
+    <path d="M714 250 C 765 250, 760 262, 816 262" marker-start="url(#ah)" marker-end="url(#ah)"/>
+    <path d="M714 260 C 765 260, 760 312, 816 312" marker-start="url(#ah)" marker-end="url(#ah)"/>
+  </g>
+  <g font-size="15" font-weight="600" fill="#EEF1F4">
+    <g><rect x="0.5" y="42.5" width="229" height="55" rx="12" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="18" y="66">TP-Link Tapo C210</text><text x="18" y="86" font-size="12" font-weight="500" fill="#98A1AC">RTSP · camera account</text></g>
+    <g><rect x="0.5" y="104.5" width="229" height="55" rx="12" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="18" y="128">UniFi G4 Pro</text><text x="18" y="148" font-size="12" font-weight="500" fill="#98A1AC">Protect import · RTSPS</text></g>
+    <g><rect x="0.5" y="166.5" width="229" height="55" rx="12" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="18" y="190">Reolink RLC-823A</text><text x="18" y="210" font-size="12" font-weight="500" fill="#98A1AC">ONVIF · PTZ</text></g>
+    <g><rect x="0.5" y="228.5" width="229" height="55" rx="12" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="18" y="252">{{pushCam}}</text><text x="18" y="272" font-size="12" font-weight="500" fill="#98A1AC">{{pushCamSub}}</text></g>
+  </g>
+  <g>
+    <rect x="330.5" y="42.5" width="380" height="268" rx="18" fill="url(#srv)" stroke="rgba(45,212,191,.45)"/>
+    <image href="/assets/mark.svg" x="352" y="62" width="36" height="36"/>
+    <text x="400" y="80" font-size="18" font-weight="700" fill="#EEF1F4">OpenCCTV</text>
+    <text x="400" y="98" font-size="12" fill="#98A1AC">Docker · Linux · macOS · Windows</text>
+    <g font-size="13.5" font-weight="600" fill="#EEF1F4">
+      <rect x="350" y="122" width="340" height="38" rx="10" fill="rgba(255,255,255,.04)"/><text x="366" y="146">go2rtc</text><text x="450" y="146" font-weight="500" fill="#98A1AC">{{go2rtc}}</text>
+      <rect x="350" y="166" width="340" height="38" rx="10" fill="rgba(255,255,255,.04)"/><text x="366" y="190">ffmpeg</text><text x="450" y="190" font-weight="500" fill="#98A1AC">{{ffmpeg}}</text>
+      <rect x="350" y="210" width="340" height="38" rx="10" fill="rgba(255,255,255,.04)"/><text x="366" y="234">rclone</text><text x="450" y="234" font-weight="500" fill="#98A1AC">{{rclone}}</text>
+      <rect x="350" y="254" width="340" height="38" rx="10" fill="rgba(255,255,255,.04)"/><text x="366" y="278">Web UI</text><text x="450" y="278" font-weight="500" fill="#98A1AC">{{webui}}</text>
+    </g>
+  </g>
+  <g font-size="14.5" font-weight="600" fill="#EEF1F4">
+    <rect x="820.5" y="44.5" width="279" height="43" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="838" y="71">{{localDisk}}</text><text x="1082" y="71" font-size="12" font-weight="500" fill="#98A1AC" text-anchor="end">{{days7}}</text>
+    <rect x="820.5" y="94.5" width="279" height="43" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="838" y="121">Google Drive</text><text x="1082" y="121" font-size="12" font-weight="500" fill="#98A1AC" text-anchor="end">{{days30}}</text>
+    <rect x="820.5" y="144.5" width="279" height="43" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="838" y="171">S3 · SMB · SFTP …</text><text x="1082" y="171" font-size="12" font-weight="500" fill="#98A1AC" text-anchor="end">{{days90}}</text>
+    <rect x="820.5" y="240.5" width="279" height="43" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="838" y="267">{{apps}}</text>
+    <rect x="820.5" y="290.5" width="279" height="43" rx="11" fill="#13171B" stroke="rgba(255,255,255,.1)"/><text x="838" y="317">{{browser}}</text><text x="1082" y="317" font-size="12" font-weight="500" fill="#98A1AC" text-anchor="end">:8080</text>
+    <text x="820" y="356" font-size="12" font-weight="500" fill="#69717C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">{{via}}</text>
+  </g>
+</svg>

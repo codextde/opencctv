@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hilfe – OpenCCTV</title>
+<meta name="description" content="Hilfe zu OpenCCTV: Server installieren, App verbinden, Tapo-, UniFi- und RTSP-Kameras hinzufügen, Push-Mitteilungen, Fernzugriff und Speicher. Kontakt: kontakt@codext.de">
+<link rel="canonical" href="https://opencctv.codext.de/de/support/">
+<link rel="alternate" hreflang="de" href="https://opencctv.codext.de/de/support/">
+<link rel="alternate" hreflang="en" href="https://opencctv.codext.de/support/">
+<meta name="theme-color" content="#0B0D10">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="nav">
+    <a class="brand" href="/de/"><img src="/assets/favicon.svg" alt="" width="30" height="30">OpenCCTV</a>
+    <nav class="nav-links" aria-label="Hauptnavigation"><a href="/de/support/" aria-current="page">Hilfe</a><a href="/datenschutz/">Datenschutz</a><a class="opt" href="/impressum/">Impressum</a><a class="lang" href="/support/" hreflang="en" lang="en">EN</a></nav>
+  </header>
+  <main class="doc">
+    <h1>Hilfe</h1>
+    <p class="meta">Antworten auf die häufigsten Fragen. Nicht dabei? Eröffne ein Issue auf <a href="https://github.com/codextde/opencctv/issues">GitHub</a> oder schreib an <a href="mailto:kontakt@codext.de">kontakt@codext.de</a>.</p>
+
+    <div class="faq">
+      <details>
+        <summary>Wie installiere ich den Server?</summary>
+        <div>
+          <p>Am schnellsten mit Docker:</p>
+          <p><code>docker run -d --name opencctv --restart unless-stopped --network host -v opencctv:/data ghcr.io/codextde/opencctv:latest</code></p>
+          <p>Ohne Docker unter Linux oder macOS <code>curl -fsSL https://opencctv.codext.de/install.sh | sh</code> ausführen, unter Windows in der PowerShell <code>irm https://opencctv.codext.de/install.ps1 | iex</code>. Dann <code>http://&lt;server-ip&gt;:8080</code> öffnen und das Admin-Konto anlegen. Weitere Wege auf der <a href="/de/#quick-start">Startseite</a>.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Die App erreicht meinen Server nicht.</summary>
+        <div>
+          <ul>
+            <li>Prüfe, ob dein Handy im selben Netz wie der Server ist oder über dein Gateway bzw. VPN verbunden ist.</li>
+            <li>Öffne <code>http://&lt;server-ip&gt;:8080</code> im Browser des Handys. Klappt das auch nicht, blockiert eine Firewall auf dem Server Port 8080.</li>
+            <li>Erlaube auf dem iPhone „Lokales Netzwerk“ für OpenCCTV unter Einstellungen &gt; Datenschutz &amp; Sicherheit &gt; Lokales Netzwerk.</li>
+            <li>Am zuverlässigsten ist das Koppeln per QR-Code: In der Weboberfläche Benutzer &amp; Geräte öffnen und den Code mit der App scannen.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Wie füge ich eine Tapo-Kamera hinzu?</summary>
+        <div>
+          <ol>
+            <li>In der Tapo-App die Kamera öffnen, auf das Zahnrad tippen, dann Erweiterte Einstellungen &gt; Kamerakonto, und Benutzername und Passwort anlegen. Das ist nicht deine TP-Link-ID.</li>
+            <li>In OpenCCTV eine Kamera hinzufügen, TP-Link Tapo wählen und IP-Adresse sowie dieses Konto eintragen.</li>
+            <li>Optional: dein TP-Link-Cloud-Passwort eintragen, um Gegensprechen zu aktivieren.</li>
+          </ol>
+          <p>Weder SD-Karte noch Tapo-Care-Abo sind nötig. Schwenkbare Modelle (C200, C210, C500 und ähnliche) werden per ONVIF gesteuert.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Wie füge ich UniFi-Protect-Kameras hinzu?</summary>
+        <div><p>Nutze den UniFi-Protect-Import in der Weboberfläche: IP deiner Konsole (UDM, UNVR oder Cloud Key) und einen lokalen Protect-Benutzer eintragen. OpenCCTV aktiviert RTSP an den Kameras und fügt sie hinzu. Protect läuft parallel weiter. Am besten funktioniert ein lokaler Benutzer, nicht dein Ubiquiti-Cloud-Konto.</p></div>
+      </details>
+
+      <details>
+        <summary>Meine Kamera steht nicht in der Liste. Geht sie trotzdem?</summary>
+        <div>
+          <p>Wahrscheinlich, wenn sie RTSP oder ONVIF anbietet. Wähle „ONVIF-Kamera“, um den Stream automatisch zu finden, oder „Andere“ und füge die RTSP-URL aus dem Handbuch ein. Kameras, die nur senden können, schicken RTMP oder RTSP an den Server; OpenCCTV zeigt die Ziel-URL nach dem Speichern an.</p>
+          <p>Reine Cloud-Kameras wie Ring, Arlo, Blink oder Nest haben keinen lokalen Stream und funktionieren nicht. Bei eufy muss RTSP unter Speicher &gt; NAS (RTSP) aktiviert sein, Wyze-Kameras brauchen die offizielle RTSP-Firmware.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Push-Mitteilungen kommen nicht an.</summary>
+        <div>
+          <ul>
+            <li>Erlaube Mitteilungen für OpenCCTV in den Systemeinstellungen und schalte sie in der App ein.</li>
+            <li>Prüfe, ob Bewegungserkennung und Mitteilungen für die Kamera auf dem Server aktiv sind.</li>
+            <li>Nach einer Mitteilung wartet die Kamera die auf dem Server eingestellte Pause ab, bevor sie die nächste sendet.</li>
+            <li>Der Server braucht Internetzugang, um Mitteilungen über den Push-Dienst von Expo zu senden.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Wie sehe ich meine Kameras von unterwegs?</summary>
+        <div><p>Entweder ein zweites OpenCCTV als Gateway auf einem VPS oder in Coolify betreiben und den Server zu Hause unter Einstellungen &gt; Fernzugriff damit verknüpfen, oder ein VPN wie Tailscale oder WireGuard nutzen und die VPN-Adresse des Servers in der App eintragen. Beides ohne Portfreigabe.</p></div>
+      </details>
+
+      <details>
+        <summary>Wie lade ich nach Google Drive, S3 oder auf mein NAS hoch?</summary>
+        <div><p>In der Weboberfläche unter Speicher ein Ziel hinzufügen. Bei Google Drive meldest du dich einmal mit deinem Google-Konto an, bei S3, SMB, SFTP, FTP und WebDAV trägst du Adresse und Zugangsdaten ein. Jedes Ziel hat eine eigene Aufbewahrungsdauer in Tagen. Vor dem Speichern „Testen“ nutzen.</p></div>
+      </details>
+
+      <details>
+        <summary>Wie aktualisiere ich den Server?</summary>
+        <div>
+          <p>Docker: <code>docker pull ghcr.io/codextde/opencctv:latest</code>, dann den Container entfernen und mit demselben Befehl neu starten. Deine Daten bleiben im Volume.</p>
+          <p>Installer: den Installationsbefehl erneut ausführen. Er ersetzt das Programm und startet den Server neu.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Ich habe das Admin-Passwort vergessen.</summary>
+        <div><p>Auf dem Server <code>opencctv reset-password &lt;benutzername&gt;</code> ausführen. Der Befehl gibt ein neues Zufallspasswort aus; mit einem zweiten Argument legst du selbst eins fest. Danach den Server neu starten, falls er lief.</p></div>
+      </details>
+
+      <details>
+        <summary>Wie entferne ich meine Daten?</summary>
+        <div><p>In der App den Server aus der Serverliste entfernen; die App löscht die gespeicherte Adresse und den Token. Auf dem Server das Datenverzeichnis löschen (das Docker-Volume, <code>~/.opencctv</code> oder <code>%APPDATA%\OpenCCTV</code>) und die Aufnahmen in deinen Speicherzielen. Wir haben keine Kopie deiner Daten.</p></div>
+      </details>
+
+      <details>
+        <summary>Ist OpenCCTV kostenlos?</summary>
+        <div><p>Ja. Server und Apps sind Open Source unter der MIT-Lizenz, ohne Werbung, Abo oder In-App-Käufe.</p></div>
+      </details>
+    </div>
+
+    <div class="contact">
+      <h2>Kontakt</h2>
+      <p>Fehler gefunden oder einen Wunsch? Eröffne bitte ein Issue auf <a href="https://github.com/codextde/opencctv/issues">GitHub</a> und nenne die Serverversion (Einstellungen &gt; System), deine Plattform und das Kameramodell. Für alles andere: <a href="mailto:kontakt@codext.de">kontakt@codext.de</a>.</p>
+      <p>Bitte schick uns keine Aufnahmen, Schnappschüsse oder Passwörter.</p>
+    </div>
+  </main>
+  <footer>
+    <div class="who"><b>OpenCCTV</b><span>© 2026 Codext GmbH · MIT-Lizenz</span></div>
+    <nav aria-label="Fußzeile"><a href="/de/">Start</a><a href="/datenschutz/">Datenschutz</a><a href="/impressum/">Impressum</a><a href="https://github.com/codextde/opencctv">GitHub</a><a href="/support/" hreflang="en" lang="en">English</a></nav>
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+@font-face { font-family: "Inter"; src: url("../../public/assets/fonts/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; }
+:root {
+  --bg: #0B0D10; --surface: #14171B; --raised: #1A1E23; --sunken: #101317;
+  --line: rgba(255,255,255,.07); --line2: rgba(255,255,255,.12);
+  --ink: #F1F3F5; --muted: #98A0AA; --dim: #636A74;
+  --accent: #14B8A6; --accent2: #2DD4BF; --accent-soft: rgba(45,212,191,.13);
+  --rec: #FF5A5F; --motion: #F5B544; --motion-soft: rgba(245,181,68,.16);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); color: var(--ink); font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; font-feature-settings: "cv11"; }
+.cam { position: relative; overflow: hidden; background: #000; border-radius: 10px; }
+.cam img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cam .ov { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 10px 12px; background: linear-gradient(180deg, rgba(0,0,0,.45), transparent 28%, transparent 70%, rgba(0,0,0,.55)); }
+.cam .top, .cam .bot { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: #fff; }
+.cam .bot { color: rgba(255,255,255,.75); font-weight: 500; font-size: 11px; font-variant-numeric: tabular-nums; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; border-radius: 999px; background: rgba(16,18,22,.6); backdrop-filter: blur(8px); font-size: 10.5px; font-weight: 650; letter-spacing: .02em; }
+.pill.rec::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--rec); }
+.pill.mot { color: #1a1206; background: var(--motion); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent2); display: inline-block; }
+svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }

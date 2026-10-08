@@ -1,0 +1,25 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+    paths: ["server/**", ".github/workflows/ci.yml"]
+  pull_request:
+    paths: ["server/**", ".github/workflows/ci.yml"]
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3"
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - run: bun test
+      - run: bun build --compile --define 'process.env.NODE_ENV="production"' src/index.ts --outfile dist/opencctv
+      - run: ./dist/opencctv --version

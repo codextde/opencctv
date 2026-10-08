@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Datenschutzerklärung – OpenCCTV</title>
+<meta name="description" content="Datenschutzerklärung für die OpenCCTV-Apps (iOS und Android), die OpenCCTV-Serversoftware, den Demo-Server und opencctv.codext.de. Die Apps sprechen nur mit deinem eigenen Server. Wir erheben keine Daten.">
+<link rel="canonical" href="https://opencctv.codext.de/datenschutz/">
+<link rel="alternate" hreflang="de" href="https://opencctv.codext.de/datenschutz/">
+<link rel="alternate" hreflang="en" href="https://opencctv.codext.de/privacy/">
+<meta name="theme-color" content="#0B0D10">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="nav">
+    <a class="brand" href="/de/"><img src="/assets/favicon.svg" alt="" width="30" height="30">OpenCCTV</a>
+    <nav class="nav-links" aria-label="Hauptnavigation"><a href="/de/support/">Hilfe</a><a href="/datenschutz/" aria-current="page">Datenschutz</a><a class="opt" href="/impressum/">Impressum</a><a class="lang" href="/privacy/" hreflang="en" lang="en">EN</a></nav>
+  </header>
+  <main class="doc">
+    <h1>Datenschutzerklärung</h1>
+    <p class="meta">Für die Apps „OpenCCTV“ für iOS und Android, die OpenCCTV-Serversoftware, den Demo-Server opencctv-demo.codext.de und die Website opencctv.codext.de. Stand: 8. Oktober 2026</p>
+
+    <h2>Kurz gesagt</h2>
+    <p>OpenCCTV ist Software, die du selbst betreibst. Die Apps verbinden sich nur mit den OpenCCTV-Servern, die du hinzufügst, oder mit unserem Demo-Server, wenn du ihn ausprobierst. Wir, die Codext GmbH, betreiben keinen Cloud-Dienst für OpenCCTV, haben keine Benutzerkonten und erheben keine Daten. Die Apps enthalten keine Analyse-, Tracking- oder Werbe-SDKs. Kamerabilder, Aufnahmen und Ereignisse bleiben auf deinem Server und in dem Speicher, den du einrichtest.</p>
+
+    <h2>Verantwortlicher</h2>
+    <p>Codext GmbH<br>Frankenstraße 10<br>74549 Wolpertshausen<br>Deutschland<br>E-Mail: <a href="mailto:kontakt@codext.de">kontakt@codext.de</a><br>Telefon: +49 7904 5203106<br>Vertreten durch den Geschäftsführer Daniel Ehrhardt</p>
+
+    <h2>Wer wofür verantwortlich ist</h2>
+    <p>Den OpenCCTV-Server installierst und betreibst du selbst oder jemand, der ihn für dich betreibt. Alles, was dieser Server verarbeitet, etwa Kamerastreams, Aufnahmen, Schnappschüsse, Bewegungsereignisse, Benutzerkonten, Gerätetoken und Push-Token, liegt in der Hand des Betreibers. Wir haben darauf keinen Zugriff und sind für diese Verarbeitung nicht verantwortlich.</p>
+    <p>Wenn deine Kameras andere Menschen erfassen, etwa Nachbarn, Besucher, Beschäftigte oder öffentliche Flächen, bist du als Betreiber dafür verantwortlich, die geltenden Regeln zur Videoüberwachung einzuhalten, zum Beispiel die DSGVO einschließlich Hinweisschildern und Speicherfristen.</p>
+
+    <h2>Die Apps</h2>
+    <h3>Auf deinem Gerät gespeicherte Daten</h3>
+    <p>Die App speichert die Adressen der Server, die du hinzugefügt hast, deinen Benutzernamen dort und einen von deinem Server ausgestellten Zugriffstoken sowie deine Einstellungen (etwa Sprache, Rasteransicht und App-Sperre). Der Zugriffstoken liegt im sicheren Speicher des Betriebssystems (iOS-Schlüsselbund, Android Keystore). Vorschaubilder und Video können vorübergehend zwischengespeichert werden. All das wird entfernt, wenn du dich von einem Server abmeldest oder die App löschst.</p>
+
+    <h3>Verbindung zu deinem Server</h3>
+    <p>Die App schickt Anfragen direkt an die Serveradresse, die du eingetragen hast: im Heimnetz, über ein von dir betriebenes OpenCCTV-Gateway oder über dein VPN. Diese Anfragen enthalten deine Anmeldedaten oder deinen Zugriffstoken, einen Gerätenamen, den du in deinem Server siehst, und deine Aktionen (zum Beispiel einen Livestream öffnen, eine Aufnahme abspielen oder eine PTZ-Kamera bewegen). Wir sind an dieser Verbindung nicht beteiligt und erhalten keine dieser Daten. Für Verbindungen außerhalb deines Heimnetzes empfehlen wir HTTPS.</p>
+
+    <h3>Demo-Server</h3>
+    <p>Wenn du auf „Demo ausprobieren“ tippst, verbindet sich die App mit unserem Demo-Server opencctv-demo.codext.de und dem gemeinsamen Login demo/demo. Personenbezogene Angaben sind nicht nötig. Um die Demo auszuliefern, verarbeitet der Server technisch notwendige Daten wie deine IP-Adresse, den Zeitpunkt und die abgerufenen Inhalte (Art. 6 Abs. 1 lit. f DSGVO, unser berechtigtes Interesse, die Software vorzuführen). Wenn du Mitteilungen erlaubst, während die Demo hinzugefügt ist, wird dein Push-Token auch auf dem Demo-Server gespeichert, damit er Demo-Bewegungsalarme senden kann; er wird gelöscht, wenn du die Demo aus der App entfernst oder der Token ungültig wird. Die Demo-Kameras zeigen lizenzierte Stock-Aufnahmen, keine echten Überwachungsvideos.</p>
+
+    <h3>Push-Mitteilungen</h3>
+    <p>Mitteilungen sind freiwillig. Wenn du sie erlaubst, fordert die App einen Push-Token bei Expo (650 Industries, Inc., USA) an, das dafür auf iOS den Apple Push Notification Service und auf Android Firebase Cloud Messaging von Google nutzt. Die App schickt diesen Token nur an die Server, die du hinzugefügt hast. Erkennt eine Kamera Bewegung, sendet dein Server die Mitteilung über den Push-Dienst von Expo; sie enthält den Kameranamen, die Uhrzeit, interne Kennungen von Kamera und Ereignis sowie den Servernamen. Schnappschüsse und Video sind nicht enthalten. Expo leitet die Mitteilung an Apple bzw. Google weiter, die sie an dein Gerät zustellen; dabei findet eine Übermittlung in die USA statt. Es gelten die Datenschutzbestimmungen von <a href="https://expo.dev/privacy">Expo</a>, <a href="https://www.apple.com/de/legal/privacy/">Apple</a> und <a href="https://policies.google.com/privacy?hl=de">Google</a>. Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die du jederzeit widerrufen kannst, indem du Mitteilungen in der App oder in den Systemeinstellungen abschaltest. Push-Token und Inhalte von Mitteilungen erhalten wir nicht, außer beim oben beschriebenen Demo-Server.</p>
+
+    <h3>Berechtigungen</h3>
+    <ul>
+      <li><strong>Kamera:</strong> nur zum Scannen des Kopplungs-QR-Codes, den dein Server anzeigt. Das Bild wird auf deinem Gerät verarbeitet und weder gespeichert noch übertragen.</li>
+      <li><strong>Mikrofon:</strong> nur solange du die Sprechtaste hältst, um über den Lautsprecher einer Kamera zu sprechen. Der Ton geht direkt an deinen Server und von dort an die Kamera. Die App zeichnet ihn nicht auf.</li>
+      <li><strong>Fotomediathek (nur hinzufügen):</strong> nur zum Sichern von Schnappschüssen oder Clips, die du exportierst. Die App kann deine vorhandenen Fotos nicht lesen.</li>
+      <li><strong>Lokales Netzwerk (iOS):</strong> um deinen Server im Heimnetz zu erreichen.</li>
+      <li><strong>Face ID, Touch ID oder Gerätesperre:</strong> nur wenn du die App-Sperre einschaltest. Die Prüfung übernimmt das Betriebssystem; die App erfährt nur, ob sie erfolgreich war.</li>
+      <li><strong>Mitteilungen:</strong> siehe oben.</li>
+    </ul>
+    <p>Die Apps nutzen weder deinen Standort noch deine Kontakte noch die Werbe-ID.</p>
+
+    <h3>Teilen und Export</h3>
+    <p>Wenn du einen Clip oder Schnappschuss teilst, übergibt die App die Datei an den Teilen-Dialog des Betriebssystems. Für die Verarbeitung durch den gewählten Empfänger oder Dienst ist dieser verantwortlich.</p>
+
+    <h3>App Stores</h3>
+    <p>Die Apps werden über den Apple App Store und Google Play verteilt. Beim Herunterladen und bei Updates verarbeiten Apple bzw. Google Daten nach ihren eigenen Datenschutzbestimmungen. Von den Stores erhalten wir lediglich zusammengefasste, nicht personenbezogene Statistiken sowie, falls du der Weitergabe zustimmst, anonyme Absturzberichte.</p>
+
+    <h2>Die Serversoftware</h2>
+    <p>Der OpenCCTV-Server sendet keine Daten an uns. Er enthält keine Telemetrie. Ins Internet verbindet er sich nur für das, was du einrichtest oder was er braucht:</p>
+    <ul>
+      <li>Beim ersten Start lädt er gegebenenfalls die Hilfsprogramme go2rtc, ffmpeg und rclone von deren offiziellen Release-Seiten (zum Beispiel auf GitHub), falls sie noch nicht installiert sind. Die Installationsskripte auf dieser Website laden OpenCCTV von GitHub. GitHub (GitHub, Inc., USA) verarbeitet dabei deine IP-Adresse.</li>
+      <li>Uploads gehen an die Speicherziele, die du einrichtest, etwa Google Drive, S3, Dropbox oder OneDrive. Dein Server verbindet sich direkt mit diesen Anbietern und den Zugangsdaten, die du eingetragen hast; Zugriffstoken werden nur auf deinem Server gespeichert. Es gelten die Datenschutzbestimmungen des jeweiligen Anbieters.</li>
+      <li>Push-Mitteilungen werden wie oben beschrieben über Expo versendet.</li>
+      <li>Wenn du deinen Server mit einem Gateway verknüpfst, hält er eine verschlüsselte Verbindung zu der Gateway-Adresse, die du eingetragen hast.</li>
+    </ul>
+
+    <h2>Website opencctv.codext.de</h2>
+    <p>Die Website wird über Cloudflare (Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA) ausgeliefert. Beim Aufruf verarbeitet Cloudflare technisch notwendige Daten wie IP-Adresse, Zeitpunkt und aufgerufene Seite, um die Website sicher auszuliefern (Art. 6 Abs. 1 lit. f DSGVO). Cloudflare ist unter dem EU-US Data Privacy Framework zertifiziert. Die Website verwendet keine Cookies, keine Analyse-Tools und keine eingebundenen Inhalte Dritter; die Schrift wird von unserer eigenen Domain geladen. Links zu GitHub, dem App Store und Google Play führen zu diesen Anbietern, deren Datenschutzbestimmungen dann gelten.</p>
+
+    <h2>Kontakt per E-Mail</h2>
+    <p>Wenn du uns eine E-Mail schreibst, verarbeiten wir deine E-Mail-Adresse und deine Nachricht, um dir zu antworten (Art. 6 Abs. 1 lit. b und f DSGVO). Wir löschen die Daten, sobald sie nicht mehr erforderlich sind, spätestens nach Ablauf gesetzlicher Aufbewahrungsfristen. Bitte schick uns keine Aufnahmen oder Schnappschüsse, wenn wir nicht ausdrücklich darum bitten.</p>
+
+    <h2>Keine Weitergabe, kein Verkauf</h2>
+    <p>Wir verkaufen keine Daten und geben keine personenbezogenen Daten an Dritte weiter, da wir solche Daten über die Apps oder die Serversoftware nicht erhalten.</p>
+
+    <h2>Deine Rechte</h2>
+    <p>Du hast das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21) sowie das Recht, eine Einwilligung mit Wirkung für die Zukunft zu widerrufen. Wende dich dazu an <a href="mailto:kontakt@codext.de">kontakt@codext.de</a>. Für Daten auf einem Server, den du oder jemand anderes betreibt, wende dich bitte an dessen Betreiber; wir können sie weder einsehen noch löschen. Du hast außerdem das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren, zum Beispiel beim Landesbeauftragten für den Datenschutz und die Informationsfreiheit Baden-Württemberg, Lautenschlagerstraße 20, 70173 Stuttgart.</p>
+
+    <h2>Änderungen</h2>
+    <p>Wir passen diese Erklärung an, wenn sich die Apps, die Software oder die Rechtslage ändern. Es gilt die jeweils hier veröffentlichte Fassung.</p>
+  </main>
+  <footer>
+    <div class="who"><b>OpenCCTV</b><span>© 2026 Codext GmbH · MIT-Lizenz</span></div>
+    <nav aria-label="Fußzeile"><a href="/de/">Start</a><a href="/de/support/">Hilfe</a><a href="/impressum/">Impressum</a><a href="https://github.com/codextde/opencctv">GitHub</a><a href="/privacy/" hreflang="en" lang="en">English</a></nav>
+  </footer>
+</div>
+</body>
+</html>

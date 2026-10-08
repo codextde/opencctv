@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "730046750033",
+    "project_id": "opencctv-14ad4",
+    "storage_bucket": "opencctv-14ad4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730046750033:android:446dca66420060fc680770",
+        "android_client_info": {
+          "package_name": "de.codext.opencctv"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCFU6WuJk_qf5FzE1mZw8Vi2jS-LOIJCU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

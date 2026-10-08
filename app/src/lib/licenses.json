@@ -1,0 +1,290 @@
+[
+ {
+  "name": "@expo-google-fonts/inter",
+  "version": "0.4.2",
+  "license": "MIT AND OFL-1.1",
+  "url": "https://github.com/expo/google-fonts"
+ },
+ {
+  "name": "@expo-google-fonts/material-symbols",
+  "version": "0.4.49",
+  "license": "MIT AND Apache-2.0",
+  "url": "https://github.com/expo/google-fonts"
+ },
+ {
+  "name": "@expo/ui",
+  "version": "57.0.22",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo",
+  "version": "57.0.27",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-application",
+  "version": "57.0.3",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-blur",
+  "version": "57.0.3",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-build-properties",
+  "version": "57.0.22",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-camera",
+  "version": "57.0.6",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-clipboard",
+  "version": "57.0.2",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-constants",
+  "version": "57.0.21",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-device",
+  "version": "57.0.2",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-file-system",
+  "version": "57.0.7",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-font",
+  "version": "57.0.4",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-haptics",
+  "version": "57.0.3",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-image",
+  "version": "57.0.5",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-keep-awake",
+  "version": "57.0.2",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-linking",
+  "version": "57.0.12",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-local-authentication",
+  "version": "57.0.3",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-localization",
+  "version": "57.0.2",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-media-library",
+  "version": "57.0.5",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-notifications",
+  "version": "57.0.22",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-router",
+  "version": "57.0.25",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-screen-orientation",
+  "version": "57.0.2",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-secure-store",
+  "version": "57.0.4",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-sharing",
+  "version": "57.0.22",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-splash-screen",
+  "version": "57.0.9",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-sqlite",
+  "version": "57.0.4",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-status-bar",
+  "version": "57.0.1",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-symbols",
+  "version": "57.0.3",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-system-ui",
+  "version": "57.0.4",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-video",
+  "version": "57.0.5",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "expo-web-browser",
+  "version": "57.0.3",
+  "license": "MIT",
+  "url": "https://github.com/expo/expo"
+ },
+ {
+  "name": "qrcode-generator",
+  "version": "2.0.4",
+  "license": "MIT",
+  "url": "https://github.com/kazuhikoarase/qrcode-generator"
+ },
+ {
+  "name": "react",
+  "version": "19.2.3",
+  "license": "MIT",
+  "url": "https://github.com/facebook/react"
+ },
+ {
+  "name": "react-dom",
+  "version": "19.2.3",
+  "license": "MIT",
+  "url": "https://github.com/facebook/react"
+ },
+ {
+  "name": "react-native",
+  "version": "0.86.3",
+  "license": "MIT",
+  "url": "https://github.com/react/react-native"
+ },
+ {
+  "name": "react-native-gesture-handler",
+  "version": "2.32.0",
+  "license": "MIT",
+  "url": "https://github.com/software-mansion/react-native-gesture-handler"
+ },
+ {
+  "name": "react-native-reanimated",
+  "version": "4.5.1",
+  "license": "MIT",
+  "url": "https://github.com/software-mansion/react-native-reanimated"
+ },
+ {
+  "name": "react-native-safe-area-context",
+  "version": "5.7.0",
+  "license": "MIT",
+  "url": "https://github.com/AppAndFlow/react-native-safe-area-context"
+ },
+ {
+  "name": "react-native-screens",
+  "version": "4.26.2",
+  "license": "MIT",
+  "url": "https://github.com/software-mansion/react-native-screens"
+ },
+ {
+  "name": "react-native-svg",
+  "version": "15.15.4",
+  "license": "MIT",
+  "url": "https://github.com/react-native-community/react-native-svg"
+ },
+ {
+  "name": "react-native-web",
+  "version": "0.21.4",
+  "license": "MIT",
+  "url": "https://github.com/necolas/react-native-web"
+ },
+ {
+  "name": "react-native-webview",
+  "version": "13.16.1",
+  "license": "MIT",
+  "url": "https://github.com/react-native-webview/react-native-webview"
+ },
+ {
+  "name": "react-native-worklets",
+  "version": "0.10.1",
+  "license": "MIT",
+  "url": "https://github.com/software-mansion/react-native-reanimated"
+ },
+ {
+  "name": "zustand",
+  "version": "5.0.15",
+  "license": "MIT",
+  "url": "https://github.com/pmndrs/zustand"
+ },
+ {
+  "name": "Inter (font)",
+  "version": "4",
+  "license": "OFL-1.1",
+  "url": "https://github.com/rsms/inter"
+ },
+ {
+  "name": "Material Symbols (font)",
+  "version": "",
+  "license": "Apache-2.0",
+  "url": "https://github.com/google/material-design-icons"
+ },
+ {
+  "name": "Demo footage (Pexels)",
+  "version": "",
+  "license": "Pexels License",
+  "url": "https://www.pexels.com/license/"
+ }
+]
