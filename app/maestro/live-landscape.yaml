@@ -1,0 +1,13 @@
+appId: de.codext.opencctv
+---
+- stopApp
+- openLink: ${LINK}
+- extendedWaitUntil:
+    visible:
+      id: live-playing
+    timeout: 45000
+- setOrientation: LANDSCAPE_LEFT
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: ${OUT}/${NAME}
+- setOrientation: PORTRAIT

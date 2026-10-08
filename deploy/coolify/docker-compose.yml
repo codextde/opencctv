@@ -2,7 +2,8 @@
 # Coolify: Docker Compose build pack, Base Directory "/deploy/coolify", Docker Compose Location "/docker-compose.yml".
 # The build context is the repository root (../..). OPENCCTV_ADMIN_PASSWORD is required; it creates the admin
 # account on first start only (later changes: opencctv reset-password admin <new> inside the container).
-# Visitors can sign in read-only with demo / demo.
+# Visitors can sign in read-only with demo / demo. WebRTC port 8555 is not published here (Coolify would route the
+# domain to the first published port); players fall back to MSE/HLS over 8080.
 services:
   opencctv:
     build:
@@ -18,9 +19,8 @@ services:
       - OPENCCTV_ADMIN_USER=${OPENCCTV_ADMIN_USER:-admin}
       - OPENCCTV_ADMIN_PASSWORD=${OPENCCTV_ADMIN_PASSWORD:?}
       - OPENCCTV_WEBRTC_CANDIDATES=${OPENCCTV_WEBRTC_CANDIDATES:-}
-    ports:
-      - "8555:8555/tcp"
-      - "8555:8555/udp"
+    expose:
+      - "8080"
     volumes:
       - opencctv-data:/data
     healthcheck:

@@ -22,8 +22,14 @@ name: Store screenshots
 - runFlow:
     file: live.yaml
     env:
-      LINK: opencctv://shots?server=${SERVER}&user=${USER}&pass=${PASS}&lang=${APP_LANG}&go=/camera/demo-storefront
+      LINK: opencctv://shots?server=${SERVER}&user=${USER}&pass=${PASS}&lang=${APP_LANG}&go=/camera/demo-shop-entrance
       NAME: 03-fullscreen
+
+- runFlow:
+    file: live-landscape.yaml
+    env:
+      LINK: opencctv://shots?server=${SERVER}&user=${USER}&pass=${PASS}&lang=${APP_LANG}&go=/camera/demo-storefront
+      NAME: 08-fullscreen-landscape
 
 - runFlow:
     file: shot.yaml

@@ -97,6 +97,7 @@ export default function LiveFullscreen() {
   }, [list.length]);
 
   useEffect(() => {
+    setZoomed(false);
     pager.current?.scrollToOffset({ offset: index * width, animated: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [width]);
@@ -218,7 +219,7 @@ export default function LiveFullscreen() {
         maxToRenderPerBatch={2}
         renderItem={({ item, index: i }) =>
           i === index ? (
-            <Zoomable width={width} height={height} onZoomChange={setZoomed} onTap={() => setControls((v) => !v)}>
+            <Zoomable key={`${item.id}-${width}`} width={width} height={height} onZoomChange={setZoomed} onTap={() => setControls((v) => !v)}>
               <LiveStage
                 ref={stage}
                 camera={item}

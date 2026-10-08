@@ -15,4 +15,8 @@ for l in $LANGS; do
   mkdir -p "screenshots/$l"
   maestro --device "$UDID" test -e SERVER="$SERVER" -e USER="${USER_NAME:-admin}" -e PASS="${USER_PASS:-admin12345}" \
     -e APP_LANG="$l" -e OUT="$PWD/screenshots/$l" maestro/screenshots.yaml
+  land="screenshots/$l/08-fullscreen-landscape.png"
+  if [[ -f $land ]] && (( $(sips -g pixelHeight $land | awk '/pixelHeight/{print $2}') > $(sips -g pixelWidth $land | awk '/pixelWidth/{print $2}') )); then
+    sips -r 270 "$land" >/dev/null
+  fi
 done
