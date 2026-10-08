@@ -10,7 +10,7 @@ RUN bun install --frozen-lockfile
 COPY server/ ./
 RUN if [ -n "$VERSION" ]; then bun -e "const p=await Bun.file('package.json').json();p.version=process.env.VERSION.replace(/^v/,'');await Bun.write('package.json',JSON.stringify(p,null,2))"; fi
 RUN case "$TARGETARCH" in arm64) T=bun-linux-arm64 ;; *) T=bun-linux-x64 ;; esac && \
-    bun build --compile --minify --target=$T --define 'process.env.NODE_ENV="production"' src/index.ts --outfile /out/opencctv
+    bun build --compile --production --target=$T src/index.ts --outfile /out/opencctv
 
 FROM debian:bookworm-slim AS tools
 ARG TARGETARCH

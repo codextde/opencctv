@@ -12,9 +12,8 @@ for (const t of targets) {
   console.log(`building ${out}`);
   const p = Bun.spawn(
     [
-      "bun", "build", "--compile", "--minify",
+      "bun", "build", "--compile", "--production",
       `--target=bun-${t}`,
-      "--define", `process.env.NODE_ENV="production"`,
       "src/index.ts", "--outfile", out,
     ],
     { stdout: "inherit", stderr: "inherit" },

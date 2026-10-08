@@ -11,7 +11,7 @@
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "build": "bun run scripts/build.ts",
-    "build:local": "bun build --compile --minify --define process.env.NODE_ENV=\"production\" src/index.ts --outfile dist/opencctv"
+    "build:local": "bun build --compile --production src/index.ts --outfile dist/opencctv"
   },
   "dependencies": {
     "qrcode-generator": "^1.4.4",
