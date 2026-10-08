@@ -27,7 +27,7 @@ type SettingsState = Values & { set: (patch: Partial<Values>) => void };
 
 const defaults: Values = {
   language: 'system',
-  appearance: 'system',
+  appearance: 'dark',
   appLock: false,
   lockAfterSec: 60,
   notifications: false,

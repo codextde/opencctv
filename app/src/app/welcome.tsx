@@ -78,7 +78,7 @@ export default function Welcome() {
               <Tile key={tile.key} label={t(`welcome.${tile.key}`)} image={tile.image} rec={i === 0 || i === 4} delay={80 + i * 90} width={tileWidth} />
             ))}
           </View>
-          <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
+          <Svg key={width} style={StyleSheet.absoluteFill} pointerEvents="none">
             <Defs>
               <LinearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
                 <Stop offset="0" stopColor="#0B0D10" stopOpacity="0.25" />

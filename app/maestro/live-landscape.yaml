@@ -1,13 +1,30 @@
 appId: de.codext.opencctv
 ---
+- setOrientation: PORTRAIT
 - stopApp
 - openLink: ${LINK}
+- runFlow:
+    when:
+      visible: 'Open in .*'
+    commands:
+      - tapOn: Open
+- waitForAnimationToEnd:
+    timeout: 1500
+- runFlow:
+    when:
+      visible: 'Open in .*'
+    commands:
+      - tapOn: Open
 - extendedWaitUntil:
     visible:
       id: live-playing
     timeout: 45000
 - setOrientation: LANDSCAPE_LEFT
 - waitForAnimationToEnd:
-    timeout: 3000
-- takeScreenshot: ${OUT}/${NAME}
-- setOrientation: PORTRAIT
+    timeout: 2000
+- extendedWaitUntil:
+    visible:
+      id: live-playing
+    timeout: 45000
+- waitForAnimationToEnd:
+    timeout: 2500

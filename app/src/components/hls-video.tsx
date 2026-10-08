@@ -59,6 +59,7 @@ export const HlsVideo = forwardRef<VideoView, Props>(function HlsVideo(
       style={style}
       contentFit={contentFit}
       nativeControls={false}
+      allowsVideoFrameAnalysis={false}
       allowsPictureInPicture={pip}
       startsPictureInPictureAutomatically={false}
       onFirstFrameRender={onFirstFrame}

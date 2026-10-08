@@ -10,7 +10,7 @@ Bundle ID / package `de.codext.opencctv`, URL scheme `opencctv` (`opencctv://pai
 bun install
 bun run typecheck      # TypeScript
 bun test src           # unit tests (URL building, timeline maths)
-bun run ios            # prebuild if needed, build the dev client, Metro on port 8097
+bun run ios            # expo run:ios (Debug build), Metro on port 8097
 bun run start          # Metro only, port 8097
 ```
 
@@ -48,10 +48,13 @@ Store builds go through EAS (`@codext-gmbh/opencctv`, project id in `app.json`).
 Build with `EXPO_PUBLIC_SCREENSHOTS=1` (Release build as above). This enables the `/shots` route behind a `Stack.Protected` guard; it never exists in store builds. The route signs in and opens a screen, e.g. `opencctv://shots?server=http://localhost:18190&user=admin&pass=admin12345&lang=de&go=/events`, or resets to onboarding with `?reset=1`.
 
 ```sh
-maestro/run-screenshots.sh <simulator-udid> [server-url] ["en de"]
+maestro/run-screenshots.sh <simulator-udid> [server-url] ["en de"] [output-dir]
+# e.g. iPhone 17 Pro Max (6.9", required by App Store Connect) and iPhone 17 Pro (6.3")
+maestro/run-screenshots.sh <pro-max-udid> http://localhost:18190 "en de" screenshots/iphone-6.9
+maestro/run-screenshots.sh <pro-udid> http://localhost:18190 "en de" screenshots/iphone-6.3
 ```
 
-The script sets a clean status bar (9:41, full signal and battery), runs `maestro/screenshots.yaml` per language and writes `screenshots/<lang>/01-welcome.png` … `07-storage.png`. The storage shot expects a target named "NAS backup" on the server.
+The script sets a clean status bar (9:41, full signal and battery) and dark appearance, runs `maestro/screenshots.yaml` per language and writes `<output-dir>/<lang>/01-welcome.png` … `07-storage.png` plus `08-fullscreen-landscape.png` (taken with `simctl`, so it carries no rotation tag). The storage shot expects a target named "NAS backup" on the server. Demo clips loop and a frame at the loop boundary can be black: check the images and rerun a single flow (`maestro/shot.yaml`, `maestro/live-landscape.yaml`) if needed.
 
 ## Structure
 

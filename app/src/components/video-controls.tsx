@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, Text, useWindowDimensions, View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { fonts, onVideo } from '@/theme';
@@ -57,8 +57,9 @@ export function GlassButton({ icon, label, onPress, onPressIn, onPressOut, activ
 
 export function Shade({ position, height, style }: { position: 'top' | 'bottom'; height: number; style?: StyleProp<ViewStyle> }) {
   const id = `shade-${position}`;
+  const { width } = useWindowDimensions();
   return (
-    <Svg pointerEvents="none" style={[{ position: 'absolute', left: 0, right: 0, height, [position]: 0 }, style]}>
+    <Svg key={width} pointerEvents="none" style={[{ position: 'absolute', left: 0, right: 0, height, [position]: 0 }, style]}>
       <Defs>
         <LinearGradient id={id} x1="0" y1={position === 'top' ? '0' : '1'} x2="0" y2={position === 'top' ? '1' : '0'}>
           <Stop offset="0" stopColor="#000" stopOpacity="0.72" />

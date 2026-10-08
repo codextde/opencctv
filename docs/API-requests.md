@@ -37,3 +37,7 @@ Title: camera name, body: e.g. "Motion detected", `channelId: 'motion'` (the app
 ## 5. Demo loop boundary in WebRTC (observation)
 
 On the iOS Simulator the full-screen `/player/:id?embed=app` (WebRTC) shows black for roughly 1 to 2 seconds every time a demo clip loops (`ffmpeg -stream_loop -1 -c copy`), e.g. every 13 s for `backyard.mp4`. Recordings and HLS are not affected. Generating continuous timestamps for the loop (for example `-fflags +genpts` with `-re`, or re-muxing the clips once into a long file) would avoid the gap on the public demo. App side nothing to do.
+
+## 6. `Content-Length` on `/api/recordings/:id/video.mp4`
+
+`serveFile` sets `content-length` for 206/200, but the response arrives as `Transfer-Encoding: chunked` without `Content-Length` (checked with `curl -D - -H 'Range: bytes=0-' …/video.mp4`; probably dropped where security headers are added to the response). AVPlayer on iOS copes, but on the Android emulator ExoPlayer stalls on the first frame of recordings while HLS live plays fine. Please keep `Content-Length` on range responses (and on `HEAD`), so progressive MP4 playback and seeking work reliably on Android.

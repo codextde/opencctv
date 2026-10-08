@@ -196,6 +196,7 @@ export function PlaybackView({ camera, initialAt, dark = false, header, onClose 
           style={[StyleSheet.absoluteFill, { opacity: player.active === i ? 1 : 0 }]}
           contentFit="contain"
           nativeControls={false}
+          allowsVideoFrameAnalysis={false}
           allowsPictureInPicture={player.active === i}
           surfaceType={Platform.OS === 'android' ? 'textureView' : undefined}
         />

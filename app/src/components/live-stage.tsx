@@ -94,8 +94,12 @@ export const LiveStage = forwardRef<StageHandle, Props>(function LiveStage(
   const key = `${camera.id}-${mode}-${quality}-${attempt}-${talkMode ? 't' : ''}`;
 
   return (
-    <View style={{ width, height, backgroundColor: '#000' }}>
-      {online ? <LiveSnapshot uri={api.snapshotUrl(camera.id, 1280)} intervalMs={playing ? 0 : 2500} style={StyleSheet.absoluteFill} contentFit="contain" /> : null}
+    <View style={{ width, height, backgroundColor: '#000' }} pointerEvents="box-none">
+      {online ? (
+        <View style={StyleSheet.absoluteFill} pointerEvents="none">
+          <LiveSnapshot uri={api.snapshotUrl(camera.id, 1280)} intervalMs={playing ? 0 : 2500} style={StyleSheet.absoluteFill} contentFit="contain" />
+        </View>
+      ) : null}
       {online && !failed ? (
         mode === 'lowLatency' ? (
           <WebRtcPlayer
@@ -121,7 +125,7 @@ export const LiveStage = forwardRef<StageHandle, Props>(function LiveStage(
             }}
           />
         ) : (
-          <View style={[StyleSheet.absoluteFill, { opacity: playing ? 1 : 0 }]}>
+          <View style={[StyleSheet.absoluteFill, { opacity: playing ? 1 : 0 }]} pointerEvents="none">
             <HlsVideo
               key={key}
               ref={video}

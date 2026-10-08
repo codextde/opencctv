@@ -29,8 +29,9 @@ export default function Servers() {
         onPress: async () => {
           const token = useServers.getState().tokens[tokenOwner(s)];
           if (s.kind === 'server' && token) createApi(s.baseUrl, token).logout().catch(() => undefined);
+          const ids = [s.id, ...useServers.getState().servers.filter((x) => x.gatewayId === s.id).map((x) => x.id)];
           await useServers.getState().remove(s.id);
-          clearQueries(`${s.id}:`);
+          for (const id of ids) clearQueries(`${id}:`);
           if (!useServers.getState().servers.length) router.replace('/welcome');
         },
       },

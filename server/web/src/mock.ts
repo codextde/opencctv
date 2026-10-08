@@ -150,8 +150,8 @@ let settings: Settings = {
   gateway: { connected: true, enabled: true, url: 'https://gw.example.com', siteName: 'Home' },
 };
 let sites: Site[] = [
-  { id: 's_home', name: 'Home', online: true, lastSeen: iso(now() - 5e3), version: '0.1.0', cameras: 6 },
-  { id: 's_office', name: 'Office', online: true, lastSeen: iso(now() - 12e3), version: '0.1.0', cameras: 3 },
+  { id: 's_home', name: 'Home', online: true, lastSeen: iso(now() - 5e3), version: '1.0.0', cameras: 6 },
+  { id: 's_office', name: 'Office', online: true, lastSeen: iso(now() - 12e3), version: '1.0.0', cameras: 3 },
   { id: 's_cabin', name: 'Cabin', online: false, lastSeen: iso(now() - 2 * DAY), version: '0.0.9', cameras: 2 },
 ];
 let gdrivePolls = 0;
@@ -170,7 +170,7 @@ export async function mockRequest(method: string, path: string, q: Q, body: unkn
   const R = `${method} ${p}`;
   let r: RegExpMatchArray | null;
 
-  if (R === 'GET /api/info') return { name: settings.serverName, version: '0.1.0', setupRequired: false, demo: true, features: ['webrtc', 'hls', 'gdrive', 'gateway'], demoLogin: { username: 'demo', password: 'demo' } };
+  if (R === 'GET /api/info') return { name: settings.serverName, version: '1.0.0', setupRequired: false, demo: true, features: ['webrtc', 'hls', 'gdrive', 'gateway'], demoLogin: { username: 'demo', password: 'demo' } };
   if (R === 'POST /api/auth/login' || R === 'POST /api/auth/setup') {
     if (!b.username || !b.password) throw new ApiError(400, 'Username and password required');
     return { token: 'mock-token', user: users[0] };
@@ -280,7 +280,7 @@ export async function mockRequest(method: string, path: string, q: Q, body: unkn
     merge(settings, b);
     return structuredClone(settings);
   }
-  if (R === 'GET /api/system') return { version: '0.1.0', uptimeSec: 3 * 86400 + 7 * 3600 + 1260, platform: 'linux-arm64', cpuPercent: 14 + Math.random() * 6, memBytes: 412e6, disk: { path: '/var/lib/opencctv', usedBytes: 388e9, freeBytes: 612e9, totalBytes: 1000e9 }, components: { go2rtc: { version: '1.9.9', ok: true }, ffmpeg: { version: '7.1', ok: true }, rclone: { version: '1.68.2', ok: true } }, cameras: cameras.length, recordingsCount: recordings.length, recordingsBytes: recordings.reduce((a, x) => a + x.sizeBytes, 0) };
+  if (R === 'GET /api/system') return { version: '1.0.0', uptimeSec: 3 * 86400 + 7 * 3600 + 1260, platform: 'linux-arm64', cpuPercent: 14 + Math.random() * 6, memBytes: 412e6, disk: { path: '/var/lib/opencctv', usedBytes: 388e9, freeBytes: 612e9, totalBytes: 1000e9 }, components: { go2rtc: { version: '1.9.9', ok: true }, ffmpeg: { version: '7.1', ok: true }, rclone: { version: '1.68.2', ok: true } }, cameras: cameras.length, recordingsCount: recordings.length, recordingsBytes: recordings.reduce((a, x) => a + x.sizeBytes, 0) };
   if (R === 'GET /api/system/logs') {
     const lv = ['INFO', 'INFO', 'INFO', 'DEBUG', 'WARN', 'ERROR'];
     const msgs = ['recorder: segment closed cam=Front Door size=228MB', 'motion: event cam=Driveway score=0.82', 'uploader: uploaded 3 segments to Google Drive', 'go2rtc: stream started cam=Backyard codec=h264', 'sftp: retry in 30s target=Synology NAS', 'camera Side Gate: dial tcp 192.168.1.45:554: i/o timeout'];
