@@ -6,7 +6,7 @@ import { openDb, getSetting, setSetting, deleteSetting, type DB } from "./db.ts"
 import { Bus } from "./bus.ts";
 import { Auth } from "./auth.ts";
 import { SettingsStore, type Settings } from "./settings.ts";
-import { CameraStore, cameraJson, go2rtcSources, isPush, type CameraRecord, type CameraStatus, type CameraJson } from "./cameras.ts";
+import { CameraStore, cameraJson, go2rtcSources, isPush, recordsOnEvent, type CameraRecord, type CameraStatus, type CameraJson } from "./cameras.ts";
 import { Recordings, type RecordingRow } from "./recordings.ts";
 import { Push } from "./push.ts";
 import { Go2rtc, codecSummary, freePort, type StreamDef } from "./go2rtc.ts";
@@ -27,6 +27,9 @@ import { logger, errMsg } from "./log.ts";
 import { HttpError, newId, randomToken, sha256 } from "./util.ts";
 import { run } from "./proc.ts";
 import { EufyBridge } from "./eufy.ts";
+
+const EUFY_CLIP_QUIET_SEC = 20;
+const EUFY_CLIP_MAX_SEC = 180;
 
 const log = logger("app");
 
@@ -248,7 +251,7 @@ export class App {
       });
     }
     const ready = this.go2rtc.running;
-    this.recorder.sync(cams, ready);
+    this.syncRecorder(cams, ready);
     this.motion.sync(
       cams.filter((c) => c.kind !== "eufy"),
       ready,
@@ -557,23 +560,40 @@ export class App {
 
   private eufyMotionTimers = new Map<string, ReturnType<typeof setTimeout>>();
   private eufyWakes = new Map<string, number>();
+  private eufyClips = new Map<string, number>();
+
+  private syncRecorder(cams = this.cameras.list(), ready = this.go2rtc.running) {
+    this.recorder.sync(
+      cams.filter((c) => !recordsOnEvent(c) || this.eufyClips.has(c.id)),
+      ready,
+    );
+  }
 
   private onEufyMotion(serial: string, at: number) {
     const cam = this.cameras.list().find((c) => c.kind === "eufy" && c.fields.serial === serial && c.enabled && c.motionEnabled);
     if (!cam) return;
-    const quietMs = Math.max(10, this.settings.get().recording.postMotionSec) * 1000;
+    const clip = recordsOnEvent(cam);
+    const quietMs = Math.max(clip ? EUFY_CLIP_QUIET_SEC : 10, this.settings.get().recording.postMotionSec) * 1000;
     const t = this.eufyMotionTimers.get(cam.id);
+    const clipStart = this.eufyClips.get(cam.id);
+    if (t && clipStart !== undefined && at - clipStart > EUFY_CLIP_MAX_SEC * 1000) return;
     if (t) clearTimeout(t);
-    else
+    else {
       this.onMotionStart(cam, at, 100, async () => {
         await Bun.sleep(4000);
         return this.eufy.snapshot(serial);
       });
+      if (clip) {
+        this.eufyClips.set(cam.id, at);
+        this.syncRecorder();
+      }
+    }
     this.eufyMotionTimers.set(
       cam.id,
       setTimeout(() => {
         this.eufyMotionTimers.delete(cam.id);
         this.onMotionEnd(cam, at, Date.now(), 100);
+        if (this.eufyClips.delete(cam.id)) this.syncRecorder();
       }, quietMs),
     );
   }

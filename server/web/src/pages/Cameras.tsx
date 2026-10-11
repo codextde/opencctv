@@ -355,8 +355,8 @@ function CameraEditor({ camera, brand, onClose }: { camera: Camera; brand?: Bran
               <div className="choice-grid">
                 {(
                   [
-                    ['continuous', 'Continuous', 'Record around the clock.'],
-                    ['motion', 'Motion only', 'Save clips when something moves.'],
+                    ['continuous', 'Continuous', camera.source.kind === 'eufy' ? 'Keeps the camera awake. Drains a battery quickly.' : 'Record around the clock.'],
+                    ['motion', 'Motion only', camera.source.kind === 'eufy' ? 'Wakes the camera and saves a clip when eufy reports motion.' : 'Save clips when something moves.'],
                     ['off', 'Off', 'Live view only, nothing is stored.'],
                   ] as [RecordingMode, string, string][]
                 ).map(([v, t, d]) => (

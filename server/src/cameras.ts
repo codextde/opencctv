@@ -100,6 +100,10 @@ function fromRow(r: CameraRow): CameraRecord {
   };
 }
 
+export function recordsOnEvent(c: Pick<CameraRecord, "kind" | "recordingMode">): boolean {
+  return c.kind === "eufy" && c.recordingMode === "motion";
+}
+
 export function isPush(kind: SourceKind): boolean {
   return kind === "rtsp-push" || kind === "rtmp-push";
 }
