@@ -30,7 +30,7 @@ export function buildGo2rtcYaml(o: Go2rtcOptions): string {
     lines.push("  candidates:");
     for (const c of o.webrtcCandidates) lines.push(`    - ${q(c)}`);
   }
-  if (o.ffmpegBin) lines.push("ffmpeg:", `  bin: ${q(o.ffmpegBin)}`);
+  if (o.ffmpegBin) lines.push("ffmpeg:", `  bin: ${q(o.ffmpegBin)}`, `  live: ${q("-fflags nobuffer -flags low_delay -rw_timeout 30000000 -i {input}")}`);
   lines.push("log:", `  level: "info"`, `  format: "text"`);
   lines.push("streams:");
   if (!o.streams.length) lines.push("  _idle: []");

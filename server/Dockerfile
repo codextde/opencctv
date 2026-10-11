@@ -26,10 +26,13 @@ RUN curl -fsSL -o /tmp/rclone.zip "https://downloads.rclone.org/rclone-current-l
 
 FROM mwader/static-ffmpeg:9.0.2 AS ffmpeg
 
+FROM node:24-bookworm-slim AS node
+
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates tzdata && rm -rf /var/lib/apt/lists/*
 COPY --from=ffmpeg /ffmpeg /ffprobe /usr/local/bin/
 COPY --from=tools /usr/local/bin/go2rtc /usr/local/bin/rclone /usr/local/bin/
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
 COPY --from=build /out/opencctv /usr/local/bin/opencctv
 COPY demo/media/ /opt/opencctv/demo/
 ENV OPENCCTV_DOCKER=1 \

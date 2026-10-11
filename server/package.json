@@ -11,9 +11,10 @@
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "build": "bun run scripts/build.ts",
-    "build:local": "bun build --compile --production src/index.ts --outfile dist/opencctv"
+    "build:local": "bun run scripts/build.ts local"
   },
   "dependencies": {
+    "@mega-yfue/eufy-sdk": "0.4.0",
     "qrcode-generator": "^1.4.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

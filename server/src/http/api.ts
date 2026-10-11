@@ -47,7 +47,7 @@ function knownHosts(ctx: Ctx): Set<string> {
 r.get("/api/info", "public", (ctx) => {
   const { app } = ctx;
   const link = app.gatewayLink();
-  const features = ["hls", "webrtc", "mjpeg", "player", "ptz", "timeline", "events", "clips", "push", "gateway", "discovery", "unifi", "storage", "pairing"];
+  const features = ["hls", "webrtc", "mjpeg", "player", "ptz", "timeline", "events", "clips", "push", "gateway", "discovery", "unifi", "eufy", "storage", "pairing"];
   if (app.gdrive?.capabilities().deviceFlow) features.push("gdrive-device");
   return json({
     name: app.settings.get().serverName,
@@ -328,6 +328,71 @@ r.post("/api/integrations/unifi/import", "admin", async (ctx) => {
       defaultSensitivity: ctx.app.settings.get().motion.defaultSensitivity,
     });
     out.push({ id: u.id, name: u.name, model: u.model, added: true, cameraId: cam.id });
+  }
+  return json({ cameras: out });
+});
+
+function eufyJson(ctx: Ctx) {
+  const added = new Map(ctx.app.cameras.list().filter((c) => c.kind === "eufy").map((c) => [c.fields.serial, c.id]));
+  return {
+    ...ctx.app.eufy.status(),
+    cameras: ctx.app.eufy.cameras().map((c) => ({ ...c, added: added.has(c.serial), cameraId: added.get(c.serial) })),
+  };
+}
+
+r.get("/api/integrations/eufy", "admin", (ctx) => json(eufyJson(ctx)));
+
+r.post("/api/integrations/eufy/login", "admin", async (ctx) => {
+  const b = await readJson<{ email?: string; password?: string; country?: string }>(ctx.req);
+  await ctx.app.eufy.login({ email: str(b.email, "email", { required: true, max: 200 }), password: str(b.password, "password", { required: true, max: 200 }), country: b.country });
+  return json(eufyJson(ctx));
+});
+
+r.post("/api/integrations/eufy/verify", "admin", async (ctx) => {
+  const b = await readJson<{ code?: string }>(ctx.req);
+  await ctx.app.eufy.verify(str(b.code, "code", { required: true, max: 20 }));
+  return json(eufyJson(ctx));
+});
+
+r.post("/api/integrations/eufy/captcha", "admin", async (ctx) => {
+  const b = await readJson<{ answer?: string }>(ctx.req);
+  await ctx.app.eufy.solveCaptcha(str(b.answer, "answer", { required: true, max: 20 }));
+  return json(eufyJson(ctx));
+});
+
+r.post("/api/integrations/eufy/refresh", "admin", async (ctx) => {
+  await ctx.app.eufy.refresh();
+  return json(eufyJson(ctx));
+});
+
+r.delete("/api/integrations/eufy", "admin", async (ctx) => {
+  await ctx.app.eufy.logout();
+  return json(eufyJson(ctx));
+});
+
+r.post("/api/integrations/eufy/import", "admin", async (ctx) => {
+  const b = await readJson<{ serials?: string[] }>(ctx.req);
+  const want = Array.isArray(b.serials) ? new Set(b.serials.map(String)) : undefined;
+  if (!ctx.app.eufy.connected) throw new HttpError(409, "Connect your eufy account first");
+  if (!ctx.app.eufy.cameras().length) await ctx.app.eufy.refresh();
+  const existing = new Set(ctx.app.cameras.list().filter((c) => c.kind === "eufy").map((c) => c.fields.serial));
+  const out: { id: string; name: string; model: string; added: boolean; cameraId?: string; error?: string }[] = [];
+  for (const e of ctx.app.eufy.cameras()) {
+    if (want && !want.has(e.serial)) continue;
+    if (existing.has(e.serial)) {
+      out.push({ id: e.serial, name: e.name, model: e.model, added: false, error: "already added" });
+      continue;
+    }
+    const fields = { serial: e.serial, model: e.model };
+    const cam = ctx.app.cameras.create({
+      name: e.name,
+      brand: "eufy",
+      built: buildSource("eufy", "eufy", fields),
+      fields,
+      defaultSensitivity: ctx.app.settings.get().motion.defaultSensitivity,
+      recordingMode: "off",
+    });
+    out.push({ id: e.serial, name: e.name, model: e.model, added: true, cameraId: cam.id });
   }
   return json({ cameras: out });
 });

@@ -149,13 +149,13 @@ function extractFromZip(buf: Uint8Array, wanted: string[], binDir: string) {
   }
 }
 
-async function extractTarXz(buf: Uint8Array, wanted: string[], binDir: string) {
+async function extractTarXz(buf: Uint8Array, wanted: string[], binDir: string, gzip = false) {
   const tmp = join(binDir, `.extract-${Date.now()}`);
   mkdirSync(tmp, { recursive: true });
   try {
-    const archive = join(tmp, "a.tar.xz");
+    const archive = join(tmp, gzip ? "a.tar.gz" : "a.tar.xz");
     writeFileSync(archive, buf);
-    const p = Bun.spawn(["tar", "-xJf", archive, "-C", tmp], { stderr: "pipe" });
+    const p = Bun.spawn(["tar", gzip ? "-xzf" : "-xJf", archive, "-C", tmp], { stderr: "pipe" });
     if ((await p.exited) !== 0) throw new Error(`tar failed: ${await new Response(p.stderr).text()}`);
     const walk = (d: string): string[] =>
       readdirSync(d).flatMap((n) => {
@@ -206,6 +206,47 @@ async function installFfmpeg(binDir: string) {
     extractFromZip(await download("https://evermeet.cx/ffmpeg/getrelease/zip", "ffmpeg"), ["ffmpeg"], binDir);
     extractFromZip(await download("https://evermeet.cx/ffmpeg/getrelease/ffprobe/zip", "ffprobe"), ["ffprobe"], binDir);
   } else throw new Error(`No ffmpeg build for ${process.platform}`);
+}
+
+const NODE_MIN = [24, 5];
+
+async function nodeVersionOk(path: string): Promise<boolean> {
+  try {
+    const p = Bun.spawn([path, "-p", "process.versions.node"], { stdout: "pipe", stderr: "ignore" });
+    const timer = setTimeout(() => p.kill(), 5000);
+    const out = (await new Response(p.stdout).text()).trim();
+    clearTimeout(timer);
+    const [maj = 0, min = 0] = out.split(".").map(Number);
+    return maj > NODE_MIN[0]! || (maj === NODE_MIN[0] && min >= NODE_MIN[1]!);
+  } catch {
+    return false;
+  }
+}
+
+export async function findNode(binDir: string): Promise<string | undefined> {
+  const list = [process.env.OPENCCTV_NODE, join(binDir, exe("node")), join(dirname(process.execPath), exe("node")), Bun.which("node") ?? undefined];
+  if (process.platform === "darwin") list.push("/opt/homebrew/bin/node", "/usr/local/bin/node");
+  if (process.platform === "linux") list.push("/usr/local/bin/node", "/usr/bin/node");
+  for (const c of list) {
+    try {
+      if (c && existsSync(c) && statSync(c).isFile() && (await nodeVersionOk(c))) return c;
+    } catch {}
+  }
+  return undefined;
+}
+
+export async function installNode(binDir: string): Promise<string | undefined> {
+  const base = "https://nodejs.org/dist/latest-v24.x";
+  const os = process.platform === "darwin" ? "darwin" : process.platform === "win32" ? "win" : "linux";
+  const a = process.arch === "arm64" ? "arm64" : "x64";
+  const sums = await (await fetch(`${base}/SHASUMS256.txt`, { headers: { "user-agent": "opencctv" } })).text();
+  const file = sums.match(new RegExp(`node-v[\\d.]+-${os}-${a}\\.${os === "win" ? "zip" : "tar\\.gz"}`))?.[0];
+  if (!file) throw new Error(`No Node.js build for ${process.platform}/${process.arch}`);
+  const buf = await download(`${base}/${file}`, "node");
+  mkdirSync(binDir, { recursive: true });
+  if (os === "win") extractFromZip(buf, ["node.exe"], binDir);
+  else await extractTarXz(buf, ["node"], binDir, true);
+  return findNode(binDir);
 }
 
 export async function ensureBinaries(binDir: string, allowDownload: boolean): Promise<Binaries> {

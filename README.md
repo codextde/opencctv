@@ -12,7 +12,7 @@ No vendor cloud, no subscription, no account with us.
 
 ## What you get
 
-- **Works with your cameras.** Brand presets for Tapo, Eufy, UniFi, Reolink, Hikvision, Dahua, Amcrest, Axis, Foscam, EZVIZ, Imou, Annke and Wyze, ONVIF discovery on your network, one-step UniFi Protect import. Cameras that can only send video can push RTMP or RTSP to the server.
+- **Works with your cameras.** Brand presets for Tapo, Eufy, UniFi, Reolink, Hikvision, Dahua, Amcrest, Axis, Foscam, EZVIZ, Imou, Annke and Wyze, ONVIF discovery on your network, one-step UniFi Protect import, and eufy account import for battery and solar cameras that have no RTSP (SoloCam, eufyCam, doorbells). Cameras that can only send video can push RTMP or RTSP to the server.
 - **Live view in under a second.** WebRTC with MSE and HLS fallback, HD and SD streams, snapshots, two-way audio and PTZ on supported cameras.
 - **Recording.** Continuous or motion-only per camera, stored the way the camera sends it (no re-encoding), with a timeline, motion markers and clip export.
 - **Your own cloud.** Recordings are copied to Google Drive, S3-compatible storage, FTP, SFTP, SMB, WebDAV, Dropbox, OneDrive or a local folder and deleted automatically after the number of days you choose. Ideal for cameras without an SD card or cloud plan.

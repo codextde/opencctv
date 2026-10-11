@@ -1,7 +1,7 @@
 import type {
   AuthResponse, Brand, Camera, CameraCreate, CameraPatch, CameraTestResult, DeepPartial, DiscoverCandidate,
   GdriveStart, GdriveStartInput, GdriveStatus, Info, MotionEvent, Page, PairingCode, Recording, Role, Settings, Site,
-  StorageInfo, StorageTarget, StorageTargetInput, SystemInfo, Timeline, UnifiImportResult, User,
+  StorageInfo, StorageTarget, StorageTargetInput, SystemInfo, Timeline, UnifiImportResult, User, EufyAccount,
 } from './types';
 import { ApiError } from './errors';
 import { mockMediaUrl, mockRequest } from './mock';
@@ -215,6 +215,13 @@ export const api = {
   discover: (signal?: AbortSignal) => get<{ candidates: DiscoverCandidate[] }>('/api/discover', undefined, signal),
   unifiImport: (b: { host: string; username: string; password: string; cameraIds?: string[] }) =>
     post<UnifiImportResult>('/api/integrations/unifi/import', b),
+  eufy: () => get<EufyAccount>('/api/integrations/eufy'),
+  eufyLogin: (b: { email: string; password: string; country: string }) => post<EufyAccount>('/api/integrations/eufy/login', b),
+  eufyVerify: (code: string) => post<EufyAccount>('/api/integrations/eufy/verify', { code }),
+  eufyCaptcha: (answer: string) => post<EufyAccount>('/api/integrations/eufy/captcha', { answer }),
+  eufyRefresh: () => post<EufyAccount>('/api/integrations/eufy/refresh', {}),
+  eufyDisconnect: () => del<EufyAccount>('/api/integrations/eufy'),
+  eufyImport: (serials: string[]) => post<UnifiImportResult>('/api/integrations/eufy/import', { serials }),
 
   recordings: (q: { camera?: string; from?: string; to?: string; limit?: number; cursor?: string }) =>
     get<Page<Recording>>('/api/recordings', q),

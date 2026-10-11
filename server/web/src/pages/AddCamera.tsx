@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { api, errorMessage } from '../api';
 import { navigate, setQuery, useRoute } from '../router';
 import { useApp } from '../store';
-import type { Brand, Camera, CameraTestResult, DiscoverCandidate, UnifiImportResult } from '../types';
+import type { Brand, Camera, CameraTestResult, DiscoverCandidate, EufyAccount, UnifiImportResult } from '../types';
 import { initials, resolution } from '../format';
 import { FieldsForm, initialValues, missingRequired } from '../components/FieldsForm';
 import { toast } from '../components/feedback';
@@ -18,6 +18,7 @@ const KIND_LABELS: Record<string, string> = {
   onvif: 'ONVIF',
   tapo: 'Tapo (native)',
   unifi: 'UniFi Protect',
+  eufy: 'eufy account',
   http: 'HTTP / MJPEG',
   'rtmp-push': 'RTMP push',
   'rtsp-push': 'RTSP push',
@@ -51,7 +52,7 @@ export function BrandMark({ id, name, size = 40, label, hue: hueProp }: { id: st
   );
 }
 
-type Tab = 'brands' | 'discover' | 'unifi';
+type Tab = 'brands' | 'discover' | 'unifi' | 'eufy';
 
 interface Prefill {
   values: Record<string, string>;
@@ -94,13 +95,14 @@ export function AddCamera({ brands, brandsError }: { brands: Brand[] | null; bra
       <a className="back-link" href="#/cameras">
         <IconChevronLeft size={15} /> Cameras
       </a>
-      <PageHeader title="Add a camera" description="Pick your camera brand, scan the network, or import from UniFi Protect." />
+      <PageHeader title="Add a camera" description="Pick your camera brand, scan the network, or import from UniFi Protect or your eufy account." />
       <div className="tabs tabs-lg" role="tablist">
         {(
           [
             ['brands', 'Choose brand'],
             ['discover', 'Scan network'],
             ['unifi', 'UniFi Protect import'],
+            ['eufy', 'eufy account'],
           ] as [Tab, string][]
         ).map(([k, l]) => (
           <button
@@ -119,6 +121,7 @@ export function AddCamera({ brands, brandsError }: { brands: Brand[] | null; bra
       {tab === 'brands' && <BrandGrid brands={brands} onPick={(b) => pick(b)} />}
       {tab === 'discover' && <Discover brands={brands} onPick={pick} />}
       {tab === 'unifi' && <UnifiImport />}
+      {tab === 'eufy' && <EufyImport />}
     </div>
   );
 }
@@ -352,6 +355,264 @@ function UnifiImport() {
         <div className="section-label">Before you start</div>
         <HelpText text={'Create a local user on the console (Admin > Users) with view access to Protect — cloud accounts with 2FA cannot be used.\nEnable RTSPS for each camera in Protect under Settings > Advanced.\nEnter the console address and the local user here. All cameras are imported at once.'} />
       </aside>
+    </div>
+  );
+}
+
+/* ---------------- eufy ---------------- */
+
+const EUFY_REGIONS: [string, string][] = [
+  ['DE', 'Germany'], ['AT', 'Austria'], ['CH', 'Switzerland'], ['NL', 'Netherlands'], ['BE', 'Belgium'], ['FR', 'France'],
+  ['IT', 'Italy'], ['ES', 'Spain'], ['PL', 'Poland'], ['SE', 'Sweden'], ['DK', 'Denmark'], ['NO', 'Norway'],
+  ['GB', 'United Kingdom'], ['IE', 'Ireland'], ['US', 'United States'], ['CA', 'Canada'], ['AU', 'Australia'],
+];
+
+function EufyImport() {
+  const { refreshCameras } = useApp();
+  const [acc, setAcc] = useState<EufyAccount | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [country, setCountry] = useState('DE');
+  const [code, setCode] = useState('');
+  const [picked, setPicked] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<UnifiImportResult | null>(null);
+
+  const apply = (a: EufyAccount) => {
+    setAcc(a);
+    if (a.email) setEmail(a.email);
+    if (a.country) setCountry(a.country);
+    setPicked(new Set(a.cameras.filter((c) => !c.added).map((c) => c.serial)));
+  };
+
+  useEffect(() => {
+    api.eufy().then(apply, (e) => setLoadError(errorMessage(e)));
+  }, []);
+
+  useEffect(() => {
+    if (acc?.status !== 'connecting') return;
+    const t = setTimeout(() => api.eufy().then(apply, () => {}), 2000);
+    return () => clearTimeout(t);
+  }, [acc]);
+
+  const run = async (fn: () => Promise<EufyAccount>) => {
+    setBusy(true);
+    setError(null);
+    try {
+      const a = await fn();
+      apply(a);
+      setCode('');
+      if (a.status === 'error') setError(a.error ?? 'Sign-in failed');
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const login = (e: FormEvent) => {
+    e.preventDefault();
+    void run(() => api.eufyLogin({ email: email.trim(), password, country }));
+  };
+
+  const verify = (e: FormEvent) => {
+    e.preventDefault();
+    void run(() => (acc?.status === 'captcha' ? api.eufyCaptcha(code.trim()) : api.eufyVerify(code.trim())));
+  };
+
+  const importPicked = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const r = await api.eufyImport([...picked]);
+      setResult(r);
+      void refreshCameras();
+      apply(await api.eufy());
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const toggle = (serial: string) =>
+    setPicked((p) => {
+      const n = new Set(p);
+      if (n.has(serial)) n.delete(serial);
+      else n.add(serial);
+      return n;
+    });
+
+  const help = (
+    <aside className="card card-body help-card">
+      <div className="section-label">How it works</div>
+      <HelpText
+        text={
+          'Sign in with your eufy Security account. OpenCCTV talks to your cameras the way the eufy app does, so battery and solar models without RTSP work too (SoloCam, eufyCam, doorbells, indoor cams).\n' +
+          'The first sign-in from a new device asks for a code that eufy emails to you.\n' +
+          'Live view starts only while someone watches, so batteries last. Motion alerts come from the camera itself.\n' +
+          'Tip: share your cameras with a second eufy account and use that one here, so the eufy app on your phone stays signed in independently.'
+        }
+      />
+    </aside>
+  );
+
+  if (!acc)
+    return (
+      <div className="split">
+        <div className="card card-body stack-16">{loadError ? <Alert>{loadError}</Alert> : <Skeleton h={140} />}</div>
+        {help}
+      </div>
+    );
+
+  if (acc.status === 'connecting')
+    return (
+      <div className="split">
+        <div className="card card-body stack-16">
+          <div className="row">
+            <Spinner /> <span>Signing in to eufy as {acc.email}…</span>
+          </div>
+        </div>
+        {help}
+      </div>
+    );
+
+  if (acc.status === 'captcha' || acc.status === '2fa')
+    return (
+      <div className="split">
+        <form className="card card-body stack-16" onSubmit={verify}>
+          <div>
+            <div className="section-label">{acc.status === 'captcha' ? 'Security check' : 'Verification code'}</div>
+            <p className="muted small">
+              {acc.status === 'captcha'
+                ? 'eufy wants a captcha before it lets this server sign in. Type the characters you see.'
+                : `eufy sent a code${acc.method ? ` by ${acc.method}` : ''} to ${acc.email}. It is valid for a few minutes.`}
+            </p>
+          </div>
+          {acc.status === 'captcha' && acc.captcha && <img className="eufy-captcha" src={acc.captcha} alt="Captcha" />}
+          <FormField label={acc.status === 'captcha' ? 'Characters' : 'Code'} htmlFor="eu-code">
+            <Input
+              id="eu-code"
+              className="mono-input"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              inputMode={acc.status === '2fa' ? 'numeric' : undefined}
+              autoComplete="one-time-code"
+              autoFocus
+              required
+            />
+          </FormField>
+          {(error || acc.error) && <Alert>{error ?? acc.error}</Alert>}
+          <div className="row">
+            <Button type="submit" variant="primary" loading={busy}>
+              Continue
+            </Button>
+            <Button onClick={() => void run(() => api.eufyDisconnect())} disabled={busy}>
+              Cancel
+            </Button>
+          </div>
+        </form>
+        {help}
+      </div>
+    );
+
+  if (acc.status === 'connected') {
+    const fresh = acc.cameras.filter((c) => !c.added);
+    return (
+      <div className="split">
+        <div className="card card-body stack-16">
+          <div className="row">
+            <BrandMark id="eufy" name="eufy" size={36} />
+            <div className="grow" style={{ marginLeft: 4 }}>
+              <div className="strong">eufy account connected</div>
+              <div className="muted small">{acc.email}</div>
+            </div>
+            <Button size="sm" icon={<IconRefresh size={14} />} onClick={() => void run(() => api.eufyRefresh())} disabled={busy}>
+              Refresh
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => void run(() => api.eufyDisconnect())} disabled={busy}>
+              Disconnect
+            </Button>
+          </div>
+          {error && <Alert>{error}</Alert>}
+          {acc.cameras.length === 0 ? (
+            <p className="muted small">No cameras in this eufy account yet.</p>
+          ) : (
+            <div className="import-result">
+              <div className="section-label">Cameras in your account</div>
+              {acc.cameras.map((c) => (
+                <label className="import-row" key={c.serial}>
+                  {c.added ? (
+                    <span className="import-check is-added">
+                      <IconCheck size={13} />
+                    </span>
+                  ) : (
+                    <input type="checkbox" checked={picked.has(c.serial)} onChange={() => toggle(c.serial)} />
+                  )}
+                  <span className="grow">{c.name}</span>
+                  <span className="muted small mono">{c.model}</span>
+                  {c.battery && <Badge tone="info">{c.batteryLevel !== undefined ? `Battery ${c.batteryLevel}%` : 'Battery'}</Badge>}
+                  {c.rssi !== undefined && c.rssi <= -80 && (
+                    <Badge tone="warn" title={`WiFi signal ${c.rssi} dBm. Live view may stutter or drop.`}>
+                      Weak WiFi
+                    </Badge>
+                  )}
+                  {c.added && <Badge tone="accent">Added</Badge>}
+                </label>
+              ))}
+            </div>
+          )}
+          {fresh.length > 0 && (
+            <div className="row">
+              <Button variant="primary" icon={<IconPlus size={15} />} loading={busy} disabled={!picked.size} onClick={() => void importPicked()}>
+                Add {picked.size === 1 ? '1 camera' : `${picked.size} cameras`}
+              </Button>
+            </div>
+          )}
+          {result && (
+            <div className="row">
+              <span className="muted small grow">
+                {result.cameras.filter((c) => c.added).length} added. Live view wakes a battery camera, the first picture can take a few seconds.
+              </span>
+              <Button onClick={() => navigate('/cameras')}>Go to cameras</Button>
+            </div>
+          )}
+        </div>
+        {help}
+      </div>
+    );
+  }
+
+  return (
+    <div className="split">
+      <form className="card card-body stack-16" onSubmit={login}>
+        <FormField label="eufy account email" htmlFor="eu-email">
+          <Input id="eu-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="username" required />
+        </FormField>
+        <div className="form-grid">
+          <FormField label="Password" htmlFor="eu-pass">
+            <Input id="eu-pass" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required />
+          </FormField>
+          <FormField label="Region" htmlFor="eu-region" hint="The country your eufy account was created in.">
+            <Select id="eu-region" value={country} onChange={(e) => setCountry(e.target.value)}>
+              {EUFY_REGIONS.map(([v, l]) => (
+                <option key={v} value={v}>
+                  {l}
+                </option>
+              ))}
+            </Select>
+          </FormField>
+        </div>
+        {(error || acc.error) && <Alert>{error ?? acc.error}</Alert>}
+        <div className="row">
+          <Button type="submit" variant="primary" loading={busy}>
+            Connect eufy account
+          </Button>
+        </div>
+      </form>
+      {help}
     </div>
   );
 }

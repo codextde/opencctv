@@ -94,4 +94,18 @@ describe("go2rtc sources", () => {
   test("push camera has no source", () => {
     expect(go2rtcSources({ ...base, kind: "rtsp-push", streamKey: "c1_key" }, true)).toEqual([{ name: "c1_key", sources: [] }]);
   });
+  test("eufy account camera pulls from the worker", () => {
+    const cam: CameraRecord = { ...base, brand: "eufy", kind: "eufy", fields: { serial: "T8170P1234567890" }, url: "eufy://T8170P1234567890", subUrl: undefined };
+    const s = go2rtcSources(cam, true, (sn) => `ffmpeg:http://127.0.0.1:1/t/live/${sn}.mp4#video=h264`);
+    expect(s).toEqual([{ name: "c1", sources: ["ffmpeg:http://127.0.0.1:1/t/live/T8170P1234567890.mp4#video=h264", "ffmpeg:c1#video=mjpeg"] }]);
+    expect(go2rtcSources(cam, false, () => "x")).toEqual([{ name: "c1", sources: [] }]);
+  });
+});
+
+describe("eufy source", () => {
+  test("account cameras use the serial, manual ones RTSP", () => {
+    expect(buildSource("eufy", "eufy", { serial: "T8170P1234567890", model: "T8170" })).toEqual({ kind: "eufy", url: "eufy://T8170P1234567890" });
+    expect(buildSource("eufy", "rtsp", { host: "h" }).kind).toBe("rtsp");
+    expect(() => buildSource("eufy", "eufy", { serial: "../x" })).toThrow();
+  });
 });

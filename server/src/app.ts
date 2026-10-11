@@ -26,6 +26,7 @@ import { credsFromUrl, hostFromUrl } from "./brands.ts";
 import { logger, errMsg } from "./log.ts";
 import { HttpError, newId, randomToken, sha256 } from "./util.ts";
 import { run } from "./proc.ts";
+import { EufyBridge } from "./eufy.ts";
 
 const log = logger("app");
 
@@ -45,6 +46,7 @@ export class App {
   readonly push: Push;
   readonly onvif = new Onvif();
   readonly hub: GatewayHub;
+  readonly eufy: EufyBridge;
   readonly internalSecret = randomToken(32);
   readonly startedAt = Date.now();
   ready = false;
@@ -85,6 +87,14 @@ export class App {
     this.recordings = new Recordings(this.db);
     this.push = new Push(this.db);
     this.hub = new GatewayHub(this.db, this.bus);
+    this.eufy = new EufyBridge(this.db, {
+      dir: dataPath(cfg, "eufy"),
+      binDir: this.dirs.bin,
+      allowDownload: !cfg.noDownload,
+      onChange: () => this.onEufyChange(),
+      onMotion: (serial, at) => this.onEufyMotion(serial, at),
+      ffmpegPath: () => this.bins.ffmpeg,
+    });
   }
 
   get rtspAuth(): { user: string; pass: string } {
@@ -137,7 +147,9 @@ export class App {
     this.settings.onChange((s, prev) => {
       if (s.recording.segmentSeconds !== prev.recording.segmentSeconds || s.recording.postMotionSec !== prev.recording.postMotionSec) this.scheduleApply();
     });
+    await this.eufy.init();
     await this.applyCameras();
+    void this.eufy.start();
     this.recorder.start();
     this.motion.start();
     await this.storage.start();
@@ -159,6 +171,7 @@ export class App {
     this.storage?.stop();
     await this.motion?.stopAll();
     await this.recorder?.stopAll();
+    await this.eufy.stop();
     await this.go2rtc?.stop();
     this.db.close();
   }
@@ -212,7 +225,7 @@ export class App {
     const enabled = cams.filter((c) => c.enabled);
     if (this.go2rtc.available && (enabled.length || this.go2rtc.running)) {
       const streams: StreamDef[] = [];
-      for (const c of enabled) streams.push(...go2rtcSources(c, !!this.bins.ffmpeg));
+      for (const c of enabled) streams.push(...go2rtcSources(c, !!this.bins.ffmpeg, (serial) => this.eufy.sourceFor(serial)));
       const rtspPublic = this.cfg.rtspPublic || enabled.some((c) => c.kind === "rtsp-push");
       if (rtspPublic) this.ports.rtsp = this.cfg.rtspPort;
       else if (!this.ports.rtsp || this.ports.rtsp === this.cfg.rtspPort) this.ports.rtsp = await freePort();
@@ -236,7 +249,10 @@ export class App {
     }
     const ready = this.go2rtc.running;
     this.recorder.sync(cams, ready);
-    this.motion.sync(cams, ready);
+    this.motion.sync(
+      cams.filter((c) => c.kind !== "eufy"),
+      ready,
+    );
     for (const id of [...this.live.keys()]) if (!cams.some((c) => c.id === id)) this.live.delete(id);
   }
 
@@ -302,6 +318,11 @@ export class App {
         l.bytesAt = now;
         if (sum.codec) l.codec = sum.codec === "h265" ? "hevc" : sum.codec;
         if (!l.probed && !l.probing && now - (l.lastProbeAttempt ?? 0) > 60_000) void this.probe(cam, l);
+      } else if (cam.kind === "eufy") {
+        l.bytes = undefined;
+        const serial = cam.fields.serial ?? "";
+        l.online = this.eufy.reachable(serial);
+        l.error = l.online ? undefined : this.eufyError(serial);
       } else {
         l.bytes = undefined;
         if (l.lastSeen && now - Date.parse(l.lastSeen) > 30_000) l.online = false;
@@ -381,6 +402,22 @@ export class App {
     const now = Date.now();
     if (hit && now - hit.at < 2000 && hit.data.length) return hit.data;
     if (hit?.pending) return hit.pending;
+    if (cam.kind === "eufy") {
+      const serial = cam.fields.serial ?? "";
+      if (hit && now - hit.at < (this.eufy.isWarm(serial) ? 2000 : 60_000) && hit.data.length) return hit.data;
+      const pending = this.eufySnapshot(cam, serial).then(
+        (data) => {
+          this.snapCache.set(key, { at: Date.now(), data });
+          return data;
+        },
+        (e) => {
+          this.snapCache.delete(key);
+          throw e;
+        },
+      );
+      this.snapCache.set(key, { at: 0, data: new Uint8Array(0), pending });
+      return pending;
+    }
     const pending = this.go2rtc.frame(cam.streamKey, width).then(
       (data) => {
         this.snapCache.set(key, { at: Date.now(), data });
@@ -400,6 +437,32 @@ export class App {
     );
     this.snapCache.set(key, { at: 0, data: new Uint8Array(0), pending });
     return pending;
+  }
+
+  private async eufySnapshot(cam: CameraRecord, serial: string): Promise<Uint8Array> {
+    const file = join(this.dirs.snapshots, `${cam.id}.jpg`);
+    const keep = (data: Uint8Array) => {
+      try {
+        writeFileSync(file, data);
+      } catch {}
+      return data;
+    };
+    if (this.eufy.isWarm(serial)) {
+      const live = await this.eufy.snapshot(serial, true);
+      if (live) return keep(live);
+    }
+    const stored = await this.eufy.snapshot(serial);
+    if (stored) return keep(stored);
+    const now = Date.now();
+    const age = existsSync(file) ? now - statSync(file).mtimeMs : Infinity;
+    if (age > 30 * 60_000 && now - (this.eufyWakes.get(cam.id) ?? 0) > 30 * 60_000) {
+      this.eufyWakes.set(cam.id, now);
+      const live = await this.eufy.snapshot(serial, true);
+      if (live) return keep(live);
+    }
+    const last = this.lastSnapshot(cam.id);
+    if (last) return last;
+    throw new HttpError(404, "No picture yet. Open the live view to wake the camera.");
   }
 
   lastSnapshot(camId: string): Uint8Array | undefined {
@@ -454,13 +517,14 @@ export class App {
 
   private openEvents = new Map<string, string>();
 
-  private onMotionStart(cam: CameraRecord, at: number, score: number) {
+  private onMotionStart(cam: CameraRecord, at: number, score: number, grab?: () => Promise<Uint8Array | undefined>) {
     const id = newId(12);
     this.openEvents.set(cam.id, id);
     this.recordings.insertEvent({ id, camera_id: cam.id, start_ms: at, end_ms: null, score, snapshot_path: null });
     void (async () => {
       try {
-        const jpg = await this.go2rtc.frame(cam.streamKey, 640, 8000);
+        const jpg = grab ? await grab() : await this.go2rtc.frame(cam.streamKey, 640, 8000);
+        if (!jpg) throw new Error("no event picture");
         const rel = `${cam.id}/${id}.jpg`;
         mkdirSync(join(this.dirs.events, cam.id), { recursive: true });
         writeFileSync(join(this.dirs.events, rel), jpg);
@@ -489,6 +553,46 @@ export class App {
     this.recordings.updateEvent(id, end, peak);
     const ev = this.recordings.getEvent(id);
     if (ev) this.bus.emit({ type: "motion", event: this.recordings.eventJsonFor(ev) });
+  }
+
+  private eufyMotionTimers = new Map<string, ReturnType<typeof setTimeout>>();
+  private eufyWakes = new Map<string, number>();
+
+  private onEufyMotion(serial: string, at: number) {
+    const cam = this.cameras.list().find((c) => c.kind === "eufy" && c.fields.serial === serial && c.enabled && c.motionEnabled);
+    if (!cam) return;
+    const quietMs = Math.max(10, this.settings.get().recording.postMotionSec) * 1000;
+    const t = this.eufyMotionTimers.get(cam.id);
+    if (t) clearTimeout(t);
+    else
+      this.onMotionStart(cam, at, 100, async () => {
+        await Bun.sleep(4000);
+        return this.eufy.snapshot(serial);
+      });
+    this.eufyMotionTimers.set(
+      cam.id,
+      setTimeout(() => {
+        this.eufyMotionTimers.delete(cam.id);
+        this.onMotionEnd(cam, at, Date.now(), 100);
+      }, quietMs),
+    );
+  }
+
+  private eufyError(serial: string): string {
+    if (!this.eufy.connected) return "eufy account not connected";
+    return this.eufy.camera(serial) ? "Camera did not answer. It may be offline or out of battery." : "Not found in the connected eufy account";
+  }
+
+  private onEufyChange() {
+    for (const c of this.cameras.list()) {
+      if (c.kind !== "eufy") continue;
+      const l = this.live.get(c.id);
+      if (l) {
+        l.online = this.eufy.reachable(c.fields.serial ?? "");
+        l.error = l.online ? undefined : this.eufyError(c.fields.serial ?? "");
+      }
+      this.emitCamera(c.id);
+    }
   }
 
   private async motionKeeper() {

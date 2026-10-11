@@ -1990,3 +1990,21 @@
   color: var(--accent-hover);
   font-weight: 600;
 }
+
+.import-row input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  margin: 1px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+label.import-row {
+  cursor: pointer;
+}
+.eufy-captcha {
+  align-self: flex-start;
+  height: 64px;
+  border-radius: var(--r-md);
+  background: #fff;
+  padding: 4px 8px;
+}
