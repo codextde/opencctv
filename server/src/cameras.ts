@@ -108,9 +108,14 @@ export function subStreamName(c: CameraRecord): string | undefined {
   return c.subUrl ? `${c.streamKey}_sub` : undefined;
 }
 
-export function go2rtcSources(c: CameraRecord, ffmpegAvailable: boolean): { name: string; sources: string[] }[] {
+export function go2rtcSources(c: CameraRecord, ffmpegAvailable: boolean, eufySource?: (serial: string) => string | undefined): { name: string; sources: string[] }[] {
   const main: string[] = [];
   const out: { name: string; sources: string[] }[] = [];
+  if (c.kind === "eufy") {
+    const src = ffmpegAvailable ? eufySource?.(c.fields.serial ?? "") : undefined;
+    out.push({ name: c.streamKey, sources: src ? [src, `ffmpeg:${c.streamKey}#video=mjpeg`] : [] });
+    return out;
+  }
   if (isPush(c.kind)) {
     out.push({ name: c.streamKey, sources: [] });
     return out;

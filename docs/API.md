@@ -26,7 +26,7 @@ Shared contract between `server/` and `app/`. JSON everywhere, ISO 8601 UTC time
 ```ts
 type Camera = {
   id: string; name: string; brand: BrandId; group?: string; order: number; enabled: boolean;
-  source: { kind: 'rtsp' | 'onvif' | 'tapo' | 'unifi' | 'http' | 'rtmp-push' | 'rtsp-push' | 'demo'; url: string /* password masked as *** */; subUrl?: string };
+  source: { kind: 'rtsp' | 'onvif' | 'tapo' | 'unifi' | 'eufy' | 'http' | 'rtmp-push' | 'rtsp-push' | 'demo'; url: string /* password masked as *** */; subUrl?: string };
   recording: { mode: 'continuous' | 'motion' | 'off'; useSubstream: boolean };
   motion: { enabled: boolean; sensitivity: number /* 1-10 */; notify: boolean };
   capabilities: { audio: boolean; twoWayAudio: boolean; ptz: boolean; substream: boolean };
@@ -53,6 +53,21 @@ type BrandId = 'tapo' | 'eufy' | 'unifi' | 'reolink' | 'hikvision' | 'dahua' | '
 | POST | `/api/cameras/:id/ptz` | `{ action:'move', pan, tilt, zoom }` (-1..1) / `{ action:'stop' }` / `{ action:'preset', preset }` | `{ ok }` |
 | GET | `/api/discover` | | `{ candidates: { host, port, brand?, name?, model?, onvif: boolean, rtsp: boolean, alreadyAdded: boolean }[] }` (ONVIF WS-Discovery + LAN port probe, ≤ 8 s) |
 | POST | `/api/integrations/unifi/import` | `{ host, username, password, cameraIds? }` | `{ cameras: { id, name, model, added: boolean }[] }` |
+| GET | `/api/integrations/eufy` (admin) | | `EufyAccount` |
+| POST | `/api/integrations/eufy/login` (admin) | `{ email, password, country }` (ISO country of the eufy account, e.g. `DE`) | `EufyAccount` (`status` is `connected`, `2fa`, `captcha` or `error`) |
+| POST | `/api/integrations/eufy/verify` (admin) | `{ code }` (code eufy sent by email) | `EufyAccount` |
+| POST | `/api/integrations/eufy/captcha` (admin) | `{ answer }` | `EufyAccount` |
+| POST | `/api/integrations/eufy/refresh` (admin) | | `EufyAccount` |
+| POST | `/api/integrations/eufy/import` (admin) | `{ serials?: string[] }` | `{ cameras: { id, name, model, added: boolean, cameraId?, error? }[] }` |
+| DELETE | `/api/integrations/eufy` (admin) | | `EufyAccount` (signs out, cameras stay but go offline) |
+
+```ts
+type EufyAccount = { status: 'disconnected' | 'connecting' | 'captcha' | '2fa' | 'connected' | 'error'; email?: string; country?: string;
+  captcha?: string /* data URL of the image to solve */; method?: string; error?: string;
+  cameras: { serial: string; name: string; model: string; battery: boolean; batteryLevel?: number; rssi?: number /* WiFi dBm */; station?: string; added: boolean; cameraId?: string }[] }
+```
+
+eufy cameras (`source.kind: 'eufy'`) are reached through the eufy account, the way the eufy app does it, so models without RTSP work. The stream is pulled only while someone watches or a recording runs; imported cameras start with recording `off` and motion events come from the camera itself. The eufy client runs in a Node.js 24.5+ worker process next to the server (bundled in the Docker image, found on `PATH` or downloaded once otherwise; override with `OPENCCTV_NODE`).
 
 ## Recordings, timeline, events
 

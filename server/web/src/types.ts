@@ -57,7 +57,7 @@ export interface Brand {
   defaultPort?: number;
 }
 
-export type SourceKind = 'rtsp' | 'onvif' | 'tapo' | 'unifi' | 'http' | 'rtmp-push' | 'rtsp-push' | 'demo';
+export type SourceKind = 'rtsp' | 'onvif' | 'tapo' | 'unifi' | 'eufy' | 'http' | 'rtmp-push' | 'rtsp-push' | 'demo';
 export type RecordingMode = 'continuous' | 'motion' | 'off';
 
 export interface Camera {
@@ -124,7 +124,31 @@ export interface DiscoverCandidate {
 }
 
 export interface UnifiImportResult {
-  cameras: { id: string; name: string; model: string; added: boolean }[];
+  cameras: { id: string; name: string; model: string; added: boolean; error?: string }[];
+}
+
+export type EufyStatus = 'disconnected' | 'connecting' | 'captcha' | '2fa' | 'connected' | 'error';
+
+export interface EufyCamera {
+  serial: string;
+  name: string;
+  model: string;
+  battery: boolean;
+  batteryLevel?: number;
+  rssi?: number;
+  station?: string;
+  added: boolean;
+  cameraId?: string;
+}
+
+export interface EufyAccount {
+  status: EufyStatus;
+  email?: string;
+  country?: string;
+  captcha?: string;
+  method?: string;
+  error?: string;
+  cameras: EufyCamera[];
 }
 
 export interface Recording {

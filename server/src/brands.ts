@@ -1,6 +1,6 @@
 import { HttpError } from "./util.ts";
 
-export type SourceKind = "rtsp" | "onvif" | "tapo" | "unifi" | "http" | "rtmp-push" | "rtsp-push" | "demo";
+export type SourceKind = "rtsp" | "onvif" | "tapo" | "unifi" | "eufy" | "http" | "rtmp-push" | "rtsp-push" | "demo";
 export type BrandId =
   | "tapo" | "eufy" | "unifi" | "reolink" | "hikvision" | "dahua" | "amcrest" | "axis" | "foscam"
   | "ezviz" | "imou" | "annke" | "wyze" | "ubiquiti" | "onvif" | "generic" | "demo";
@@ -59,8 +59,8 @@ export const BRANDS: Brand[] = [
     defaultPort: 554,
     fields: [host, user(""), pass, port(554)],
     help: [
-      "RTSP must be enabled per camera in the Eufy app: Camera > Settings > Storage > NAS (RTSP) (HomeBase 3: Storage > NAS (RTSP)). Set a username and password there.",
-      "Stream URL: rtsp://user:pass@IP/live0. Battery cameras only stream while RTSP is active and drain faster.",
+      "Easiest: use the eufy account import. It signs in to your eufy account and adds every camera, including battery and solar models without RTSP (SoloCam, eufyCam, doorbells). Live view starts on demand, so batteries last.",
+      "Manual RTSP (wired models only): enable it per camera in the eufy app under Camera > Settings > Storage > NAS (RTSP) and set a username and password there. Stream URL: rtsp://user:pass@IP/live0.",
     ].join("\n"),
   },
   {
@@ -238,8 +238,13 @@ export function buildSource(brandId: string, kind: string | undefined, fields: R
       const extra = f.cloudPassword ? [`tapo://${encodeURIComponent(f.cloudPassword)}@${f.host}`] : [];
       return { kind: f.cloudPassword ? "tapo" : "rtsp", url: `rtsp://${c}${h}/stream1`, subUrl: `rtsp://${c}${h}/stream2`, extra, twoWayAudio: extra.length > 0, ptzPort: 2020 };
     }
-    case "eufy":
+    case "eufy": {
+      if (kind === "eufy" || f.serial) {
+        if (!/^[A-Za-z0-9]{6,32}$/.test(f.serial ?? "")) throw new HttpError(400, "eufy serial number is required");
+        return { kind: "eufy", url: `eufy://${f.serial}` };
+      }
       return { kind: "rtsp", url: `rtsp://${c}${hp(f, 554)}/live0` };
+    }
     case "unifi": {
       const h = (f.host ?? "").trim();
       if (!h || !/^[a-zA-Z0-9.\-:\[\]]+$/.test(h)) throw new HttpError(400, "Host is required");
