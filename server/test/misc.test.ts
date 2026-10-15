@@ -9,6 +9,7 @@ import { parseProbeMatch, scopeValue, guessBrand } from "../src/discovery.ts";
 import { rcloneToken } from "../src/storage/gdrive.ts";
 import { redact } from "../src/log.ts";
 import { matchParts } from "../src/http/router.ts";
+import { recordsOnEvent } from "../src/cameras.ts";
 import { createHash } from "node:crypto";
 
 describe("demo", () => {
@@ -116,6 +117,11 @@ describe("onvif and discovery", () => {
 });
 
 describe("misc", () => {
+  test("eufy cameras in motion mode record on events only", () => {
+    expect(recordsOnEvent({ kind: "eufy", recordingMode: "motion" })).toBe(true);
+    expect(recordsOnEvent({ kind: "eufy", recordingMode: "continuous" })).toBe(false);
+    expect(recordsOnEvent({ kind: "rtsp", recordingMode: "motion" })).toBe(false);
+  });
   test("rclone token format", () => {
     const t = JSON.parse(rcloneToken({ access_token: "a", refresh_token: "r", expires_in: 3600 }));
     expect(t).toMatchObject({ access_token: "a", refresh_token: "r", token_type: "Bearer" });
