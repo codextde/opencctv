@@ -306,6 +306,7 @@ export const en: Dict = {
     eufyAddedMany: '{n} cameras added',
     eufyAddedBody: 'Live view wakes a battery camera, so the first picture can take a few seconds.',
     eufySignOut: 'Sign out of eufy',
+    eufySignOutTitle: 'Sign out of eufy?',
     eufySignOutBody: 'Imported cameras stay but go offline until you sign in again.',
     eufyFailed: 'Sign-in failed',
     eufyRefresh: 'Reload cameras',

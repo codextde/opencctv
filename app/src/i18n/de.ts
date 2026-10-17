@@ -304,6 +304,7 @@ export const de = {
     eufyAddedMany: '{n} Kameras hinzugefügt',
     eufyAddedBody: 'Die Live-Ansicht weckt eine Akkukamera, das erste Bild kann daher ein paar Sekunden dauern.',
     eufySignOut: 'Von eufy abmelden',
+    eufySignOutTitle: 'Von eufy abmelden?',
     eufySignOutBody: 'Importierte Kameras bleiben erhalten, sind aber offline, bis du dich wieder anmeldest.',
     eufyFailed: 'Anmeldung fehlgeschlagen',
     eufyRefresh: 'Kameras neu laden',

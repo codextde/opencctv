@@ -2,7 +2,7 @@ import * as Clipboard from 'expo-clipboard';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -472,6 +472,12 @@ function EufyImport({ onImported, onManual }: { onImported: () => void; onManual
     void run(() => api.eufyDisconnect());
   };
 
+  const confirmSignOut = () =>
+    Alert.alert(t('add.eufySignOutTitle'), t('add.eufySignOutBody'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('add.eufySignOut'), style: 'destructive', onPress: signOut },
+    ]);
+
   const importPicked = async () => {
     setBusy(true);
     setError(null);
@@ -613,7 +619,7 @@ function EufyImport({ onImported, onManual }: { onImported: () => void; onManual
           {result ? <Button title={t('common.done')} variant={fresh.length > 0 ? 'secondary' : 'primary'} onPress={() => router.back()} /> : null}
         </View>
         <Group footer={t('add.eufySignOutBody')} style={{ marginBottom: 0 }}>
-          <Row icon="logout" iconBg={c.dangerSoft} iconColor={c.danger} title={t('add.eufySignOut')} destructive onPress={busy ? undefined : signOut} last />
+          <Row icon="logout" iconBg={c.dangerSoft} iconColor={c.danger} title={t('add.eufySignOut')} destructive onPress={busy ? undefined : confirmSignOut} last />
         </Group>
       </ScrollView>
     );
