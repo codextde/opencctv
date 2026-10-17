@@ -13,7 +13,7 @@ export type ServerInfo = {
 
 export type AuthResponse = { token: string; user: User };
 
-export type SourceKind = 'rtsp' | 'onvif' | 'tapo' | 'unifi' | 'http' | 'rtmp-push' | 'rtsp-push' | 'demo';
+export type SourceKind = 'rtsp' | 'onvif' | 'tapo' | 'unifi' | 'eufy' | 'http' | 'rtmp-push' | 'rtsp-push' | 'demo';
 export type RecordingMode = 'continuous' | 'motion' | 'off';
 
 export type PtzPreset = { id: string; name: string };
@@ -70,6 +70,30 @@ export type DiscoveryCandidate = {
   rtsp: boolean;
   alreadyAdded: boolean;
 };
+
+export type EufyCamera = {
+  serial: string;
+  name: string;
+  model: string;
+  battery: boolean;
+  batteryLevel?: number;
+  rssi?: number;
+  station?: string;
+  added: boolean;
+  cameraId?: string;
+};
+
+export type EufyAccount = {
+  status: 'disconnected' | 'connecting' | 'captcha' | '2fa' | 'connected' | 'error';
+  email?: string;
+  country?: string;
+  captcha?: string;
+  method?: string;
+  error?: string;
+  cameras: EufyCamera[];
+};
+
+export type EufyImportResult = { cameras: { id: string; name: string; model: string; added: boolean; cameraId?: string; error?: string }[] };
 
 export type Recording = {
   id: string;
