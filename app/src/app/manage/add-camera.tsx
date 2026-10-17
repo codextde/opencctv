@@ -2,21 +2,21 @@ import * as Clipboard from 'expo-clipboard';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DynamicForm, initialValues, missingFields, OptionChips } from '@/components/forms';
 import { Icon } from '@/components/icon';
 import { toast } from '@/components/toast';
-import { Button, Field, Group, IconButton, Loading, Notice, Row, success } from '@/components/ui';
+import { Button, EmptyState, errorText, Field, Group, IconButton, Loading, Notice, Row, success } from '@/components/ui';
 import { useT } from '@/i18n';
 import { useApi } from '@/lib/connection';
 import { invalidate } from '@/lib/query';
-import type { Brand, Camera, CameraTestResult, DiscoveryCandidate } from '@/lib/types';
-import { radius, space, type, useColors } from '@/theme';
+import type { Brand, Camera, CameraTestResult, DiscoveryCandidate, EufyAccount, EufyImportResult } from '@/lib/types';
+import { fonts, radius, space, type, useColors } from '@/theme';
 
-type Step = { kind: 'pick' } | { kind: 'form'; brand: Brand; seed?: DiscoveryCandidate } | { kind: 'unifi' } | { kind: 'done'; camera: Camera; snapshot?: string };
+type Step = { kind: 'pick' } | { kind: 'form'; brand: Brand; seed?: DiscoveryCandidate } | { kind: 'unifi' } | { kind: 'eufy' } | { kind: 'done'; camera: Camera; snapshot?: string };
 
 const HOST_KEYS = ['host', 'ip', 'address', 'hostname'];
 
@@ -72,12 +72,13 @@ export default function AddCamera() {
     return (brands ?? []).filter((b) => b.id !== 'demo' && (!q || b.name.toLowerCase().includes(q)));
   }, [brands, query]);
 
-  const title = step.kind === 'pick' ? t('add.title') : step.kind === 'form' ? step.brand.name : step.kind === 'unifi' ? t('add.unifi') : t('add.doneTitle');
+  const eufyBrand = brands?.find((b) => b.id === 'eufy');
+  const title = step.kind === 'pick' ? t('add.title') : step.kind === 'form' ? step.brand.name : step.kind === 'unifi' ? t('add.unifi') : step.kind === 'eufy' ? t('add.eufy') : t('add.doneTitle');
 
   return (
     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: c.background }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={[styles.header, { paddingTop: Platform.OS === 'android' ? insets.top + space.md : space.lg }]}>
-        {step.kind === 'form' || step.kind === 'unifi' ? <IconButton icon="chevronLeft" label={t('common.back')} onPress={back} /> : <View style={{ width: 40 }} />}
+        {step.kind === 'form' || step.kind === 'unifi' || step.kind === 'eufy' ? <IconButton icon="chevronLeft" label={t('common.back')} onPress={back} /> : <View style={{ width: 40 }} />}
         <Text style={[type.headline, { color: c.text, flex: 1, textAlign: 'center' }]} numberOfLines={1}>
           {title}
         </Text>
@@ -120,7 +121,8 @@ export default function AddCamera() {
           </Group>
 
           <Group title={t('add.integrations')}>
-            <Row icon="gateway" title={t('add.unifi')} subtitle={t('add.unifiHint')} onPress={() => setStep({ kind: 'unifi' })} last />
+            <Row icon="gateway" title={t('add.unifi')} subtitle={t('add.unifiHint')} onPress={() => setStep({ kind: 'unifi' })} />
+            <Row icon="cloud" title={t('add.eufy')} subtitle={t('add.eufyHint')} onPress={() => setStep({ kind: 'eufy' })} last />
           </Group>
 
           <Text style={[type.label, { color: c.textTertiary, marginBottom: space.sm, marginHorizontal: space.xs }]}>{t('add.brands')}</Text>
@@ -131,7 +133,7 @@ export default function AddCamera() {
           <View style={styles.brandGrid}>
             {filtered.map((b, i) => (
               <Animated.View key={b.id} entering={FadeInDown.delay(Math.min(i, 12) * 25)} style={styles.brandCell}>
-                <Pressable onPress={() => setStep({ kind: 'form', brand: b })} style={({ pressed }) => [styles.brand, { backgroundColor: pressed ? c.surfacePressed : c.surface, borderColor: c.border }]} accessibilityRole="button">
+                <Pressable onPress={() => setStep(b.id === 'eufy' ? { kind: 'eufy' } : { kind: 'form', brand: b })} style={({ pressed }) => [styles.brand, { backgroundColor: pressed ? c.surfacePressed : c.surface, borderColor: c.border }]} accessibilityRole="button">
                   <View style={[styles.brandMark, { backgroundColor: c.accentSoft }]}>
                     <Text style={[type.bodyStrong, { color: c.accentStrong }]}>{b.name.slice(0, 1).toUpperCase()}</Text>
                   </View>
@@ -158,6 +160,13 @@ export default function AddCamera() {
       ) : null}
 
       {step.kind === 'unifi' ? <UnifiImport onDone={() => invalidate(`${scope}cameras`)} /> : null}
+
+      {step.kind === 'eufy' ? (
+        <EufyImport
+          onImported={() => invalidate(`${scope}cameras`)}
+          onManual={eufyBrand ? () => setStep({ kind: 'form', brand: eufyBrand }) : undefined}
+        />
+      ) : null}
 
       {step.kind === 'done' ? (
         <Animated.View entering={FadeIn} style={[styles.content, { flex: 1, paddingBottom: insets.bottom + space.xl }]}>
@@ -371,6 +380,300 @@ function UnifiImport({ onDone }: { onDone: () => void }) {
   );
 }
 
+const EUFY_REGIONS: [string, string, string][] = [
+  ['DE', 'Germany', 'Deutschland'],
+  ['AT', 'Austria', 'Österreich'],
+  ['CH', 'Switzerland', 'Schweiz'],
+  ['NL', 'Netherlands', 'Niederlande'],
+  ['BE', 'Belgium', 'Belgien'],
+  ['FR', 'France', 'Frankreich'],
+  ['IT', 'Italy', 'Italien'],
+  ['ES', 'Spain', 'Spanien'],
+  ['PL', 'Poland', 'Polen'],
+  ['SE', 'Sweden', 'Schweden'],
+  ['DK', 'Denmark', 'Dänemark'],
+  ['NO', 'Norway', 'Norwegen'],
+  ['GB', 'United Kingdom', 'Vereinigtes Königreich'],
+  ['IE', 'Ireland', 'Irland'],
+  ['US', 'United States', 'USA'],
+  ['CA', 'Canada', 'Kanada'],
+  ['AU', 'Australia', 'Australien'],
+];
+
+function EufyImport({ onImported, onManual }: { onImported: () => void; onManual?: () => void }) {
+  const { t, lang, plural } = useT();
+  const c = useColors();
+  const insets = useSafeAreaInsets();
+  const { api } = useApi();
+  const [acc, setAcc] = useState<EufyAccount | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [country, setCountry] = useState('DE');
+  const [code, setCode] = useState('');
+  const [picked, setPicked] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<EufyImportResult | null>(null);
+
+  const apply = (a: EufyAccount) => {
+    setAcc(a);
+    if (a.email) setEmail(a.email);
+    if (a.country) setCountry(a.country);
+    setPicked(new Set(a.cameras.filter((x) => !x.added).map((x) => x.serial)));
+  };
+
+  const load = () => {
+    setLoadError(null);
+    api.eufy().then(apply, (e) => setLoadError(errorText(e)));
+  };
+
+  useEffect(load, [api]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (acc?.status !== 'connecting') return;
+    const timer = setTimeout(() => api.eufy().then(apply, () => {}), 2000);
+    return () => clearTimeout(timer);
+  }, [acc, api]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const run = async (fn: () => Promise<EufyAccount>) => {
+    setBusy(true);
+    setError(null);
+    try {
+      const a = await fn();
+      apply(a);
+      setCode('');
+      if (a.status === 'error') setError(a.error ?? t('add.eufyFailed'));
+      if (a.status === 'connected') success();
+    } catch (e) {
+      setError(errorText(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const login = () => {
+    if (!email.trim() || !password) {
+      setError(t('connect.errMissing'));
+      return;
+    }
+    void run(() => api.eufyLogin({ email: email.trim(), password, country }));
+  };
+
+  const verify = () => {
+    if (!code.trim()) return;
+    void run(() => (acc?.status === 'captcha' ? api.eufyCaptcha(code.trim()) : api.eufyVerify(code.trim())));
+  };
+
+  const signOut = () => {
+    setResult(null);
+    setPassword('');
+    void run(() => api.eufyDisconnect());
+  };
+
+  const confirmSignOut = () =>
+    Alert.alert(t('add.eufySignOutTitle'), t('add.eufySignOutBody'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('add.eufySignOut'), style: 'destructive', onPress: signOut },
+    ]);
+
+  const importPicked = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const r = await api.eufyImport([...picked]);
+      setResult(r);
+      success();
+      onImported();
+      apply(await api.eufy());
+    } catch (e) {
+      setError(errorText(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const toggle = (serial: string) =>
+    setPicked((p) => {
+      const n = new Set(p);
+      if (n.has(serial)) n.delete(serial);
+      else n.add(serial);
+      return n;
+    });
+
+  const contentStyle = [styles.content, { paddingBottom: insets.bottom + space.xxl, gap: space.lg }];
+
+  if (!acc)
+    return (
+      <View style={contentStyle}>
+        {loadError ? <Notice tone="danger" icon="warning" title={loadError} action={t('common.retry')} onAction={load} /> : <Loading />}
+      </View>
+    );
+
+  if (acc.status === 'connecting')
+    return (
+      <View style={[contentStyle, styles.scanBox]}>
+        <ActivityIndicator color={c.accentStrong} />
+        <Text style={[type.callout, { color: c.textSecondary, textAlign: 'center' }]}>{t('add.eufyConnecting', { email: acc.email ?? email })}</Text>
+      </View>
+    );
+
+  if (acc.status === 'captcha' || acc.status === '2fa') {
+    const captcha = acc.status === 'captcha';
+    return (
+      <ScrollView contentContainerStyle={contentStyle} keyboardShouldPersistTaps="handled">
+        <Notice
+          tone="info"
+          icon={captcha ? 'shield' : 'key'}
+          title={captcha ? t('add.eufyCaptchaTitle') : t('add.eufyCodeTitle')}
+          body={captcha ? t('add.eufyCaptchaBody') : t('add.eufyCodeBody', { email: acc.email ?? email })}
+        />
+        {captcha && acc.captcha ? (
+          <View style={[styles.captcha, { borderColor: c.border }]}>
+            <Image source={{ uri: acc.captcha }} style={StyleSheet.absoluteFill} contentFit="contain" accessibilityLabel={t('add.eufyCaptchaTitle')} />
+          </View>
+        ) : null}
+        <Field
+          label={captcha ? t('add.eufyCaptchaAnswer') : t('add.eufyCode')}
+          value={code}
+          onChangeText={setCode}
+          autoFocus
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType={captcha ? 'default' : 'number-pad'}
+          textContentType={captcha ? 'none' : 'oneTimeCode'}
+          autoComplete={captcha ? 'off' : 'one-time-code'}
+          onSubmitEditing={verify}
+          returnKeyType="go"
+          style={{ fontFamily: fonts.semibold, letterSpacing: 2 }}
+        />
+        {error || acc.error ? <Notice tone="danger" icon="warning" title={error ?? acc.error ?? ''} /> : null}
+        <View style={{ gap: space.sm }}>
+          <Button title={t('add.eufyContinue')} onPress={verify} loading={busy} disabled={!code.trim()} />
+          <Button title={t('common.cancel')} variant="secondary" onPress={signOut} disabled={busy} />
+        </View>
+      </ScrollView>
+    );
+  }
+
+  if (acc.status === 'connected') {
+    const fresh = acc.cameras.filter((x) => !x.added);
+    const addedCount = result?.cameras.filter((x) => x.added).length ?? 0;
+    return (
+      <ScrollView contentContainerStyle={contentStyle} keyboardShouldPersistTaps="handled">
+        <Group style={{ marginBottom: 0 }}>
+          <Row
+            icon="checkCircle"
+            title={t('add.eufyConnected')}
+            subtitle={acc.email}
+            right={busy ? <ActivityIndicator color={c.textSecondary} /> : <IconButton icon="refresh" size={34} label={t('add.eufyRefresh')} onPress={() => void run(() => api.eufyRefresh())} />}
+            last
+          />
+        </Group>
+        {error ? <Notice tone="danger" icon="warning" title={error} /> : null}
+        {result ? (
+          <Animated.View entering={FadeIn}>
+            <Notice tone="good" icon="checkCircle" title={plural(addedCount, 'add.eufyAddedOne', 'add.eufyAddedMany')} body={t('add.eufyAddedBody')} />
+          </Animated.View>
+        ) : null}
+        {acc.cameras.length === 0 ? (
+          <EmptyState icon="camera" title={t('add.eufyEmpty')} />
+        ) : (
+          <Group title={t('add.eufyCameras')} style={{ marginBottom: 0 }}>
+            {acc.cameras.map((cam, i) => {
+              const on = picked.has(cam.serial);
+              const meta = [
+                cam.model,
+                cam.battery ? (cam.batteryLevel !== undefined ? t('add.eufyBatteryLevel', { n: cam.batteryLevel }) : t('add.eufyBattery')) : null,
+                cam.rssi !== undefined && cam.rssi <= -80 ? t('add.eufyWeakWifi') : null,
+              ];
+              return (
+                <Row
+                  key={cam.serial}
+                  icon={cam.added ? 'checkCircle' : 'camera'}
+                  iconBg={cam.added ? undefined : c.surfaceSunken}
+                  iconColor={cam.added ? undefined : c.textSecondary}
+                  title={cam.name}
+                  subtitle={meta.filter(Boolean).join(' · ')}
+                  value={cam.added ? t('add.alreadyAdded') : undefined}
+                  onPress={cam.added ? undefined : () => toggle(cam.serial)}
+                  right={cam.added ? undefined : <Checkbox checked={on} />}
+                  last={i === acc.cameras.length - 1}
+                />
+              );
+            })}
+          </Group>
+        )}
+        {fresh.length > 0 ? <Notice tone="warn" icon="record" title={t('add.eufyRecordingTitle')} body={t('add.eufyRecordingBody')} /> : null}
+        <View style={{ gap: space.sm }}>
+          {fresh.length > 0 ? (
+            <Button
+              title={picked.size === 1 ? t('add.eufyAddOne') : t('add.eufyAddMany', { n: picked.size })}
+              icon="plus"
+              onPress={importPicked}
+              loading={busy}
+              disabled={!picked.size}
+            />
+          ) : null}
+          {result ? <Button title={t('common.done')} variant={fresh.length > 0 ? 'secondary' : 'primary'} onPress={() => router.back()} /> : null}
+        </View>
+        <Group footer={t('add.eufySignOutBody')} style={{ marginBottom: 0 }}>
+          <Row icon="logout" iconBg={c.dangerSoft} iconColor={c.danger} title={t('add.eufySignOut')} destructive onPress={busy ? undefined : confirmSignOut} last />
+        </Group>
+      </ScrollView>
+    );
+  }
+
+  return (
+    <ScrollView contentContainerStyle={contentStyle} keyboardShouldPersistTaps="handled">
+      <Notice tone="info" icon="info" title={t('add.eufy')} body={t('add.eufyBody')} />
+      <Field
+        label={t('add.eufyEmail')}
+        value={email}
+        onChangeText={setEmail}
+        placeholder="name@example.com"
+        autoCapitalize="none"
+        autoCorrect={false}
+        keyboardType="email-address"
+        textContentType="username"
+        autoComplete="email"
+      />
+      <Field
+        label={t('connect.password')}
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry={!showPassword}
+        autoCapitalize="none"
+        autoCorrect={false}
+        textContentType="password"
+        autoComplete="current-password"
+        onSubmitEditing={login}
+        returnKeyType="go"
+        right={<IconButton icon={showPassword ? 'eyeOff' : 'eye'} size={32} label={t('connect.password')} onPress={() => setShowPassword((v) => !v)} style={{ backgroundColor: 'transparent' }} />}
+      />
+      <View style={{ gap: 6 }}>
+        <Text style={[type.caption, { color: c.textSecondary }]}>{t('add.eufyRegion')}</Text>
+        <OptionChips options={EUFY_REGIONS.map(([v, en, de]) => ({ value: v, label: lang === 'de' ? de : en }))} value={country} onChange={setCountry} />
+        <Text style={[type.caption, { color: c.textTertiary }]}>{t('add.eufyRegionHint')}</Text>
+      </View>
+      {error || acc.error ? <Notice tone="danger" icon="warning" title={error ?? acc.error ?? ''} /> : null}
+      <Button title={t('add.eufyConnect')} onPress={login} loading={busy} />
+      <Text style={[type.caption, { color: c.textTertiary }]}>{`${t('add.unifiPrivacy')} ${t('add.eufyTip')}`}</Text>
+      {onManual ? <Button title={t('add.eufyManual')} variant="ghost" onPress={onManual} /> : null}
+    </ScrollView>
+  );
+}
+
+function Checkbox({ checked }: { checked: boolean }) {
+  const c = useColors();
+  return (
+    <View style={[styles.checkbox, checked ? { backgroundColor: c.accent, borderColor: c.accent } : { borderColor: c.borderStrong }]}>
+      {checked ? <Icon name="check" size={13} color={c.onAccent} /> : null}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: space.md, paddingHorizontal: space.lg, paddingBottom: space.md },
   content: { paddingHorizontal: space.lg, paddingTop: space.md },
@@ -383,5 +686,7 @@ const styles = StyleSheet.create({
   brandMark: { width: 32, height: 32, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
   testCard: { borderRadius: radius.lg, borderWidth: 1, overflow: 'hidden' },
   testImage: { width: '100%', aspectRatio: 16 / 9, backgroundColor: '#000' },
+  captcha: { height: 96, borderRadius: radius.md, borderWidth: StyleSheet.hairlineWidth, backgroundColor: '#FFFFFF', overflow: 'hidden' },
+  checkbox: { width: 22, height: 22, borderRadius: 7, borderWidth: 1.5, alignItems: 'center', justifyContent: 'center' },
   doneHero: { aspectRatio: 16 / 9, borderRadius: radius.lg, overflow: 'hidden', marginTop: space.md },
 });
