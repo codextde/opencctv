@@ -24,7 +24,7 @@ No vendor cloud, no subscription, no account with us.
 
 | | |
 |---|---|
-| iPhone | App Store (in review) |
+| iPhone | [App Store](https://apps.apple.com/app/id6820598101) |
 | Android | [Google Play](https://play.google.com/store/apps/details?id=de.codext.opencctv) |
 
 The app source is in [`app/`](app) (Expo, React Native). Tap **Try the live demo** in the app to look around without a server.
