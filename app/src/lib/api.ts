@@ -4,6 +4,8 @@ import type {
   Camera,
   CameraTestResult,
   DiscoveryCandidate,
+  EufyAccount,
+  EufyImportResult,
   GdriveStart,
   GdriveStatus,
   MotionEvent,
@@ -116,6 +118,14 @@ export function createApi(base: string, token: string | null, onUnauthorized?: (
     discover: () => get<{ candidates: DiscoveryCandidate[] }>('/api/discover', undefined, { timeoutMs: 20000 }),
     unifiImport: (body: { host: string; username: string; password: string; cameraIds?: string[] }) =>
       call<{ cameras: { id: string; name: string; model: string; added: boolean }[] }>('POST', '/api/integrations/unifi/import', body, { timeoutMs: 30000 }),
+
+    eufy: () => get<EufyAccount>('/api/integrations/eufy'),
+    eufyLogin: (body: { email: string; password: string; country: string }) => call<EufyAccount>('POST', '/api/integrations/eufy/login', body, { timeoutMs: 60000 }),
+    eufyVerify: (code: string) => call<EufyAccount>('POST', '/api/integrations/eufy/verify', { code }, { timeoutMs: 60000 }),
+    eufyCaptcha: (answer: string) => call<EufyAccount>('POST', '/api/integrations/eufy/captcha', { answer }, { timeoutMs: 60000 }),
+    eufyRefresh: () => call<EufyAccount>('POST', '/api/integrations/eufy/refresh', {}, { timeoutMs: 60000 }),
+    eufyDisconnect: () => call<EufyAccount>('DELETE', '/api/integrations/eufy'),
+    eufyImport: (serials: string[]) => call<EufyImportResult>('POST', '/api/integrations/eufy/import', { serials }, { timeoutMs: 60000 }),
 
     snapshotUrl: (id: string, w?: number) => mediaUrl(base, `/api/cameras/${id}/snapshot.jpg`, token, { w }),
     liveHlsUrl: (id: string, quality: 'hd' | 'sd') => mediaUrl(base, `/api/cameras/${id}/live.m3u8`, token, { quality }),
