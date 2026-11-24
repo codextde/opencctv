@@ -9,7 +9,7 @@ import { SettingsStore, type Settings } from "./settings.ts";
 import { CameraStore, cameraJson, go2rtcSources, isPush, recordsOnEvent, type CameraRecord, type CameraStatus, type CameraJson } from "./cameras.ts";
 import { Recordings, type RecordingRow } from "./recordings.ts";
 import { Push } from "./push.ts";
-import { Go2rtc, codecSummary, freePort, type StreamDef } from "./go2rtc.ts";
+import { AudioRecovery, Go2rtc, audioMissing, codecSummary, freePort, type StreamDef } from "./go2rtc.ts";
 import { Recorder } from "./recorder.ts";
 import { MotionDetector, segmentDecidable, shouldKeepSegment } from "./motion.ts";
 import { Storage } from "./storage/index.ts";
@@ -35,7 +35,7 @@ const log = logger("app");
 
 type GatewayLink = { url: string; siteId: string; secret: string; siteName?: string; enabled: boolean };
 
-type LiveStatus = CameraStatus & { bytes?: number; bytesAt?: number; probed?: boolean; probing?: boolean; lastProbeAttempt?: number; ptzChecked?: boolean };
+type LiveStatus = CameraStatus & { bytes?: number; bytesAt?: number; probed?: boolean; probing?: boolean; lastProbeAttempt?: number; ptzChecked?: boolean; audioWatch?: AudioRecovery };
 
 export type HandleMeta = { tunnel?: { role: string; user?: string; base?: string } };
 
@@ -321,6 +321,7 @@ export class App {
         l.bytesAt = now;
         if (sum.codec) l.codec = sum.codec === "h265" ? "hevc" : sum.codec;
         if (!l.probed && !l.probing && now - (l.lastProbeAttempt ?? 0) > 60_000) void this.probe(cam, l);
+        if (cam.kind !== "eufy" && !isPush(cam.kind)) this.watchAudio(cam, l, audioMissing(streams[cam.streamKey], cam.streamKey), now);
       } else if (cam.kind === "eufy") {
         l.bytes = undefined;
         const serial = cam.fields.serial ?? "";
@@ -337,6 +338,26 @@ export class App {
     }
   }
 
+  private audioRestartAt = 0;
+
+  private watchAudio(cam: CameraRecord, l: LiveStatus, missing: boolean | undefined, now: number) {
+    l.audioWatch ??= new AudioRecovery();
+    const act = l.audioWatch.check(now, missing, !!cam.caps.audio);
+    if (act === "reconnect") {
+      if (now - this.audioRestartAt < 15_000) return;
+      this.audioRestartAt = now;
+      log.warn(`${cam.name}: camera stream has no audio track, reconnecting cameras`);
+      void this.go2rtc.restart().catch((e) => log.warn(`go2rtc restart failed: ${errMsg(e)}`));
+    } else if (act === "give-up") {
+      log.warn(`${cam.name}: camera still sends no audio after reconnecting, treating it as video only`);
+      this.cameras.setCaps(cam.id, { audio: false });
+      this.emitCamera(cam.id);
+    } else if (act === "restored") {
+      this.cameras.setCaps(cam.id, { audio: true });
+      this.emitCamera(cam.id);
+    }
+  }
+
   private async probe(cam: CameraRecord, l: LiveStatus) {
     l.probing = true;
     l.lastProbeAttempt = Date.now();
@@ -348,8 +369,10 @@ export class App {
         l.width = p.width;
         l.height = p.height;
         l.fps = p.fps;
-        const audio = !!p.audio;
-        if (!!cam.caps.audio !== audio) this.cameras.setCaps(cam.id, { audio });
+        // A camera that had audio keeps the flag when this probe sees none: right after a
+        // camera restart the track is often missing, and watchAudio reconnects and clears the
+        // flag only if it never comes back.
+        if (p.audio && !cam.caps.audio) this.cameras.setCaps(cam.id, { audio: true });
         this.emitCamera(cam.id);
       }
     } finally {

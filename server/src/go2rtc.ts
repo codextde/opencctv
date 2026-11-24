@@ -172,6 +172,16 @@ export class Go2rtc {
     await this.readyPromise;
   }
 
+  // Restart go2rtc so every camera connection is made again from scratch. Deleting and
+  // re-adding a stream over the API does not do this: go2rtc only drops the name, and the
+  // running producer keeps serving the consumers it already has.
+  async restart(): Promise<void> {
+    if (!this.sup.running) return;
+    await this.sup.restart();
+    this.readyPromise = this.waitReady();
+    await this.readyPromise;
+  }
+
   async stop(): Promise<void> {
     await this.sup.stop();
   }
@@ -260,6 +270,56 @@ export function codecSummary(info: StreamInfo | undefined): { online: boolean; c
       }
   }
   return { online, codec, audio, bytes };
+}
+
+// Whether the camera's own connection is up without an audio track. Our transcoders
+// (ffmpeg:<stream>#audio=...) read from the stream itself, so they are left out.
+// undefined: the camera is not connected right now.
+export function audioMissing(info: StreamInfo | undefined, stream: string): boolean | undefined {
+  let connected = false;
+  for (const p of info?.producers ?? []) {
+    const src = `${p.url ?? ""} ${p.source ?? ""}`;
+    if (src.startsWith(`ffmpeg:${stream}#`) || src.includes(`source=ffmpeg:${stream}`)) continue;
+    if (!p.medias?.length) continue;
+    connected = true;
+    if (p.medias.some((m) => /^audio, recvonly\b/.test(m))) return false;
+  }
+  return connected ? true : undefined;
+}
+
+// Some cameras answer the first DESCRIBE after their RTSP server restarts with video only.
+// go2rtc keeps that connection, and when it reconnects it only re-attaches the tracks it
+// already had, so the audio never comes back by itself. When a camera that has audio sends
+// none for a while, ask for a fresh connection, backing off; give up after the last delay.
+export class AudioRecovery {
+  private since?: number;
+  private tries = 0;
+  private gaveUp = false;
+
+  constructor(private delays = [15_000, 60_000, 300_000]) {}
+
+  check(now: number, missing: boolean | undefined, expected: boolean): "reconnect" | "give-up" | "restored" | undefined {
+    if (missing === false) {
+      const back = this.gaveUp;
+      this.since = undefined;
+      this.tries = 0;
+      this.gaveUp = false;
+      return back ? "restored" : undefined;
+    }
+    if (missing === undefined || !expected || this.gaveUp) {
+      this.since = undefined;
+      return;
+    }
+    this.since ??= now;
+    if (now - this.since < this.delays[Math.min(this.tries, this.delays.length - 1)]!) return;
+    this.since = undefined;
+    if (this.tries >= this.delays.length) {
+      this.gaveUp = true;
+      return "give-up";
+    }
+    this.tries++;
+    return "reconnect";
+  }
 }
 
 export { errMsg };

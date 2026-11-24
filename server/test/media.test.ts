@@ -4,7 +4,7 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseSegmentPath } from "../src/media.ts";
-import { buildGo2rtcYaml, codecSummary } from "../src/go2rtc.ts";
+import { AudioRecovery, audioMissing, buildGo2rtcYaml, codecSummary } from "../src/go2rtc.ts";
 import { buildRecordArgs } from "../src/recorder.ts";
 
 describe("HLS playlist rewrite", () => {
@@ -95,5 +95,44 @@ describe("go2rtc config and recorder args", () => {
     expect(s).toContain("-strftime 1");
     expect(s).toContain("movflags=+faststart");
     expect(s).toContain("-tag:v hvc1");
+  });
+});
+
+describe("audio recovery", () => {
+  const cam = (medias: string[]) => ({ url: "rtsp://cam/main", medias });
+  const opus = { source: "exec:ffmpeg -i rtsp://127.0.0.1:1/s?audio&source=ffmpeg:s -c:a libopus", medias: ["audio, recvonly, OPUS/48000/2"] };
+
+  test("audio missing only when the camera connection itself has none", () => {
+    expect(audioMissing({ producers: [cam(["video, recvonly, H264", "audio, recvonly, MPEG4-GENERIC/16000/2"])], consumers: [] }, "s")).toBe(false);
+    expect(audioMissing({ producers: [cam(["video, recvonly, H264"]), opus, { url: "ffmpeg:s#audio=aac" }], consumers: [] }, "s")).toBe(true);
+    expect(audioMissing({ producers: [cam(["video, recvonly, H264", "audio, sendonly, PCMA/8000"])], consumers: [] }, "s")).toBe(true);
+    expect(audioMissing({ producers: [{ url: "rtsp://cam/main" }, { url: "ffmpeg:s#audio=opus" }], consumers: [] }, "s")).toBeUndefined();
+    expect(audioMissing(undefined, "s")).toBeUndefined();
+  });
+
+  test("reconnects after the delay, backs off, then gives up", () => {
+    const r = new AudioRecovery([10, 20]);
+    expect(r.check(0, true, true)).toBeUndefined();
+    expect(r.check(10, true, true)).toBe("reconnect");
+    expect(r.check(11, undefined, true)).toBeUndefined();
+    expect(r.check(12, true, true)).toBeUndefined();
+    expect(r.check(32, true, true)).toBe("reconnect");
+    expect(r.check(33, true, true)).toBeUndefined();
+    expect(r.check(53, true, true)).toBe("give-up");
+    expect(r.check(1000, true, true)).toBeUndefined();
+    expect(r.check(1001, false, true)).toBe("restored");
+    expect(r.check(1002, false, true)).toBeUndefined();
+  });
+
+  test("audio coming back resets the backoff; cameras without audio are left alone", () => {
+    const r = new AudioRecovery([10, 20]);
+    r.check(0, true, true);
+    expect(r.check(10, true, true)).toBe("reconnect");
+    expect(r.check(11, false, true)).toBeUndefined();
+    r.check(12, true, true);
+    expect(r.check(22, true, true)).toBe("reconnect");
+    const n = new AudioRecovery([10]);
+    expect(n.check(0, true, false)).toBeUndefined();
+    expect(n.check(100, true, false)).toBeUndefined();
   });
 });
