@@ -263,6 +263,8 @@ r.post("/api/cameras/:id/ptz", "user", async (ctx) => {
   const t = ctx.app.onvifTarget(cam);
   if (!t) throw new HttpError(400, "PTZ is not available for this camera");
   const b = await readJson<{ action?: string; pan?: number; tilt?: number; zoom?: number; preset?: string }>(ctx.req);
+  // Before the command goes out, so the first frames of the move are already ignored by motion detection.
+  if (b.action === "move" || b.action === "stop" || b.action === "preset") ctx.app.motion.ptzActivity(cam.id, b.action);
   try {
     if (b.action === "move") await ctx.app.onvif.move(t, Number(b.pan) || 0, Number(b.tilt) || 0, Number(b.zoom) || 0);
     else if (b.action === "stop") await ctx.app.onvif.stop(t);

@@ -111,8 +111,37 @@ export type MotionCallbacks = {
 
 type Det = { sup: Supervisor; tracker: MotionTracker; key: string; cam: CameraRecord };
 
+export type PtzAction = "move" | "stop" | "preset";
+
+/**
+ * Keeps motion detection quiet while a camera is being moved over PTZ: the whole picture changes because the camera
+ * turns, not because something happened, and every pan used to raise a motion event and a push notification.
+ * A move is quiet until the matching stop (capped, in case the stop never arrives), then for a settle time so the last
+ * step and the video delay can pass. A preset is quiet for a fixed time because there is no stop for it.
+ */
+export class PtzQuiet {
+  private moveUntil = 0;
+  private settleUntil = 0;
+  private presetUntil = 0;
+
+  constructor(private o: { settleMs: number; moveCapMs: number; presetMs: number } = { settleMs: 5000, moveCapMs: 60_000, presetMs: 15_000 }) {}
+
+  ptz(action: PtzAction, now = Date.now()): void {
+    if (action === "move") this.moveUntil = now + this.o.moveCapMs;
+    else if (action === "stop") {
+      this.moveUntil = 0;
+      this.settleUntil = now + this.o.settleMs;
+    } else this.presetUntil = now + this.o.presetMs;
+  }
+
+  muted(now = Date.now()): boolean {
+    return now < Math.max(this.moveUntil, this.settleUntil, this.presetUntil);
+  }
+}
+
 export class MotionDetector {
   private dets = new Map<string, Det>();
+  private quiet = new Map<string, PtzQuiet>();
   private timer?: ReturnType<typeof setInterval>;
 
   constructor(
@@ -127,6 +156,13 @@ export class MotionDetector {
       const now = Date.now();
       for (const d of this.dets.values()) for (const ev of d.tracker.tick(now)) this.dispatch(d, ev);
     }, 1000);
+  }
+
+  /** Called for every PTZ command sent to a camera; motion is ignored while it moves (see PtzQuiet). */
+  ptzActivity(cameraId: string, action: PtzAction): void {
+    let q = this.quiet.get(cameraId);
+    if (!q) this.quiet.set(cameraId, (q = new PtzQuiet()));
+    q.ptz(action);
   }
 
   active(cameraId: string): boolean {
@@ -183,6 +219,7 @@ export class MotionDetector {
         onStderr: (line) => {
           const score = parseSceneScore(line);
           if (score === undefined || Date.now() - startedAt < 5000) return;
+          if (this.quiet.get(cam.id)?.muted()) return;
           for (const ev of tracker.feed(Date.now(), score)) this.dispatch(det, ev);
         },
         onExit: () => {
