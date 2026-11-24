@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,11 +17,32 @@ type SheetState = { open: boolean; title?: string; message?: string; actions: Sh
 
 const useSheet = create<SheetState>()(() => ({ open: false, actions: [] }));
 
+// Every mounted host registers here and only the most recent one renders. A React Native <Modal> is presented
+// from the view controller of the screen it is mounted in, so the host in the root layout cannot show above a
+// fullScreenModal/modal screen on iOS: the sheet stayed hidden until that screen was dismissed. Screens presented
+// as modals mount their own host, which then takes over until they unmount.
+const useHosts = create<{ stack: number[] }>()(() => ({ stack: [] }));
+let nextHostId = 1;
+
 export function showActions(opts: { title?: string; message?: string; actions: SheetAction[]; cancel?: string }) {
   useSheet.setState({ open: true, ...opts });
 }
 
 export function ActionSheetHost() {
+  const [id] = useState(() => nextHostId++);
+  useEffect(() => {
+    useHosts.setState((s) => ({ stack: [...s.stack, id] }));
+    return () => {
+      const { stack } = useHosts.getState();
+      if (stack[stack.length - 1] === id && useSheet.getState().open) useSheet.setState({ open: false });
+      useHosts.setState((s) => ({ stack: s.stack.filter((x) => x !== id) }));
+    };
+  }, [id]);
+  const top = useHosts((s) => s.stack[s.stack.length - 1] === id);
+  return top ? <SheetModal /> : null;
+}
+
+function SheetModal() {
   const cancelLabel = useT().t('common.cancel');
   const { open, title, message, actions, cancel } = useSheet();
   const c = useColors();
