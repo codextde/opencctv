@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { MotionTracker, parseSceneScore, segmentDecidable, sensitivityToThreshold, shouldKeepSegment, buildMotionArgs } from "../src/motion.ts";
+import { MotionTracker, PtzQuiet, parseSceneScore, segmentDecidable, sensitivityToThreshold, shouldKeepSegment, buildMotionArgs } from "../src/motion.ts";
 
 describe("motion", () => {
   test("sensitivity maps to decreasing thresholds", () => {
@@ -55,5 +55,31 @@ describe("motion", () => {
     const a = buildMotionArgs("ffmpeg", "rtsp://127.0.0.1/c?video", false).join(" ");
     expect(a).toContain("fps=2,scale=320:-2,select=gte(scene\\,0),metadata=print");
     expect(buildMotionArgs("ffmpeg", "x", true)).toContain("nokey");
+  });
+});
+
+describe("ptz quiet", () => {
+  const o = { settleMs: 5000, moveCapMs: 60_000, presetMs: 15_000 };
+  test("quiet while moving and for the settle time after stop", () => {
+    const q = new PtzQuiet(o);
+    expect(q.muted(0)).toBe(false);
+    q.ptz("move", 1000);
+    expect(q.muted(30_000)).toBe(true);
+    q.ptz("stop", 31_000);
+    expect(q.muted(35_999)).toBe(true);
+    expect(q.muted(36_000)).toBe(false);
+  });
+  test("a move without stop is capped", () => {
+    const q = new PtzQuiet(o);
+    q.ptz("move", 0);
+    expect(q.muted(59_999)).toBe(true);
+    expect(q.muted(60_000)).toBe(false);
+  });
+  test("presets are quiet for a fixed time and a stop does not cut them short", () => {
+    const q = new PtzQuiet(o);
+    q.ptz("preset", 0);
+    q.ptz("stop", 1000);
+    expect(q.muted(14_999)).toBe(true);
+    expect(q.muted(15_000)).toBe(false);
   });
 });
