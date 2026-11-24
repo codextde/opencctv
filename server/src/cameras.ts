@@ -16,7 +16,7 @@ export type CameraStatus = {
   error?: string;
 };
 
-export type CameraCaps = { audio: boolean; twoWayAudio: boolean; ptz: boolean; substream: boolean; ptzPresets?: { id: string; name: string }[] };
+export type CameraCaps = { audio: boolean; twoWayAudio: boolean; ptz: boolean; substream: boolean; ptzPresets?: { id: string; name: string }[]; ptzZoom?: boolean };
 
 export type CameraRow = {
   id: string;
@@ -344,6 +344,7 @@ export function cameraJson(c: CameraRecord, status: CameraStatus, pushBase?: { r
       ptz: !!c.caps.ptz,
       substream: !!c.subUrl,
       ptzPresets: c.caps.ptz ? c.caps.ptzPresets ?? [] : undefined,
+      ptzZoom: c.caps.ptz ? c.caps.ptzZoom : undefined,
     },
     status,
     createdAt: toIso(c.createdAt),

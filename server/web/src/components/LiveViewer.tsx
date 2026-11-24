@@ -115,13 +115,13 @@ export function LiveViewer({
             <IconChevronRight size={22} />
           </button>
         )}
-        {camera.capabilities.ptz && camera.status.online && <PtzPad cameraId={camera.id} />}
+        {camera.capabilities.ptz && camera.status.online && <PtzPad cameraId={camera.id} zoom={camera.capabilities.ptzZoom !== false} />}
       </div>
     </Modal>
   );
 }
 
-function PtzPad({ cameraId }: { cameraId: string }) {
+function PtzPad({ cameraId, zoom }: { cameraId: string; zoom: boolean }) {
   const moving = useRef(false);
   const start = (pan: number, tilt: number, zoom: number) => (e: RPointerEvent) => {
     e.preventDefault();
@@ -160,10 +160,12 @@ function PtzPad({ cameraId }: { cameraId: string }) {
         {btn('Pan right', 0.6, 0, 0, <IconArrowUp size={16} style={{ transform: 'rotate(90deg)' }} />, 'ptz-right')}
         {btn('Tilt down', 0, -0.6, 0, <IconArrowDown size={16} />, 'ptz-down')}
       </div>
-      <div className="ptz-zoom">
-        {btn('Zoom in', 0, 0, 0.6, <IconZoomIn size={16} />, '')}
-        {btn('Zoom out', 0, 0, -0.6, <IconZoomOut size={16} />, '')}
-      </div>
+      {zoom && (
+        <div className="ptz-zoom">
+          {btn('Zoom in', 0, 0, 0.6, <IconZoomIn size={16} />, '')}
+          {btn('Zoom out', 0, 0, -0.6, <IconZoomOut size={16} />, '')}
+        </div>
+      )}
     </div>
   );
 }

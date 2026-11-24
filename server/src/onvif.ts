@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 
 export type OnvifTarget = { host: string; port: number; username: string; password: string };
-type OnvifInfo = { ptzUrl?: string; mediaUrl?: string; profile?: string; offsetMs: number; at: number };
+type OnvifInfo = { ptzUrl?: string; mediaUrl?: string; profile?: string; zoom?: boolean; offsetMs: number; at: number };
 
 const NS = {
   env: "http://www.w3.org/2003/05/soap-envelope",
@@ -64,6 +64,17 @@ async function soap(url: string, body: string, auth?: { username: string; passwo
   return text;
 }
 
+/**
+ * Whether a GetNodes response advertises zoom movement. `undefined` when the nodes carry no SupportedPTZSpaces,
+ * so callers can keep the zoom controls for cameras that do not describe themselves.
+ * ZoomSpeedSpace alone does not count: it only sets the speed for other moves.
+ */
+export function zoomFromNodes(xml: string): boolean | undefined {
+  const spaces = tagValues(xml, "SupportedPTZSpaces");
+  if (!spaces.length) return undefined;
+  return spaces.some((s) => /<(?:[\w-]+:)?(?:Absolute|Relative|Continuous)Zoom\w*Space[\s>]/.test(s));
+}
+
 function rewriteHost(xaddr: string, t: OnvifTarget): string {
   try {
     const u = new URL(xaddr);
@@ -106,10 +117,15 @@ export class Onvif {
       const prof = await soap(rewriteHost(mediaUrl, t), "<trt:GetProfiles/>", auth);
       profile = attrValues(prof, "Profiles", "token")[0];
     }
+    let zoom: boolean | undefined;
+    if (ptzUrl && profile) {
+      zoom = await soap(rewriteHost(ptzUrl, t), "<tptz:GetNodes/>", auth).then(zoomFromNodes, () => undefined);
+    }
     const info: OnvifInfo = {
       mediaUrl: mediaUrl ? rewriteHost(mediaUrl, t) : undefined,
       ptzUrl: ptzUrl ? rewriteHost(ptzUrl, t) : undefined,
       profile,
+      zoom,
       offsetMs,
       at: Date.now(),
     };
@@ -120,6 +136,11 @@ export class Onvif {
   async hasPtz(t: OnvifTarget): Promise<boolean> {
     const i = await this.info(t);
     return !!(i.ptzUrl && i.profile);
+  }
+
+  /** false when the PTZ node lists no zoom spaces, undefined when unknown. */
+  async hasZoom(t: OnvifTarget): Promise<boolean | undefined> {
+    return (await this.info(t)).zoom;
   }
 
   private async ptz(t: OnvifTarget): Promise<{ url: string; profile: string; auth: { username: string; password: string; offsetMs: number } }> {

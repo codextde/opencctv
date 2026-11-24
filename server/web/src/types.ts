@@ -70,7 +70,7 @@ export interface Camera {
   source: { kind: SourceKind | string; url: string; subUrl?: string };
   recording: { mode: RecordingMode; useSubstream: boolean };
   motion: { enabled: boolean; sensitivity: number; notify: boolean };
-  capabilities: { audio: boolean; twoWayAudio: boolean; ptz: boolean; substream: boolean };
+  capabilities: { audio: boolean; twoWayAudio: boolean; ptz: boolean; substream: boolean; ptzZoom?: boolean };
   status: {
     online: boolean;
     recording: boolean;

@@ -28,7 +28,7 @@ export type Camera = {
   source: { kind: SourceKind; url: string; subUrl?: string };
   recording: { mode: RecordingMode; useSubstream: boolean };
   motion: { enabled: boolean; sensitivity: number; notify: boolean };
-  capabilities: { audio: boolean; twoWayAudio: boolean; ptz: boolean; substream: boolean; ptzPresets?: PtzPreset[] };
+  capabilities: { audio: boolean; twoWayAudio: boolean; ptz: boolean; substream: boolean; ptzPresets?: PtzPreset[]; ptzZoom?: boolean };
   status: {
     online: boolean;
     recording: boolean;
