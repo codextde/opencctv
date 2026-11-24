@@ -24,7 +24,7 @@ export type RecorderDeps = {
   getCamera: (cameraId: string) => CameraRecord | undefined;
 };
 
-type Entry = { sup: Supervisor; key: string; cam: CameraRecord; lastSegmentAt: number; lastError?: string };
+type Entry = { sup: Supervisor; key: string; cam: CameraRecord; lastSegmentAt: number; lastError?: string; lastSize?: string };
 
 export function buildRecordArgs(o: {
   ffmpeg: string;
@@ -150,6 +150,8 @@ export class Recorder {
         },
         minBackoffMs: 3000,
         maxBackoffMs: 60_000,
+        // The segment being written grows continuously; doScan() (every 20 s) reports growth as progress.
+        stallMs: 90_000,
       }),
     };
     this.entries.set(cam.id, entry);
@@ -176,6 +178,17 @@ export class Recorder {
         for (const f of readdirSync(join(dir, day))) if (/^\d{6}\.mp4$/.test(f)) files.push(`${day}/${f}`);
       }
       files.sort();
+      const newest = files[files.length - 1];
+      if (entry && newest) {
+        try {
+          const st = statSync(join(dir, newest));
+          const mark = `${newest}:${st.size}`;
+          if (mark !== entry.lastSize) {
+            entry.lastSize = mark;
+            entry.sup.progress();
+          }
+        } catch {}
+      }
       const active = !includeNewest && entry?.sup.running;
       const finished = active ? files.slice(0, -1) : files;
       for (const rel of finished) {
