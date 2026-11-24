@@ -390,8 +390,9 @@ export class App {
       const ptz = await this.onvif.hasPtz(t);
       let presets: { id: string; name: string }[] = [];
       if (ptz) presets = (await this.onvif.presets(t).catch(() => [])).map((p) => ({ id: p.token, name: p.name }));
-      if (ptz !== !!cam.caps.ptz || JSON.stringify(presets) !== JSON.stringify(cam.caps.ptzPresets ?? [])) {
-        this.cameras.setCaps(cam.id, { ptz, ptzPresets: presets });
+      const zoom = ptz ? await this.onvif.hasZoom(t) : undefined;
+      if (ptz !== !!cam.caps.ptz || zoom !== cam.caps.ptzZoom || JSON.stringify(presets) !== JSON.stringify(cam.caps.ptzPresets ?? [])) {
+        this.cameras.setCaps(cam.id, { ptz, ptzPresets: presets, ptzZoom: zoom });
         this.emitCamera(cam.id);
       }
     } catch (e) {

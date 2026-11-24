@@ -83,15 +83,17 @@ export function PtzPad({ api, camera }: { api: ServerApi; camera: Camera }) {
             <Animated.View style={[styles.knob, knob]} />
           </View>
         </GestureDetector>
-        <View style={styles.zoom}>
-          <Pressable onPressIn={() => zoom(1)} onPressOut={stop} style={styles.zoomBtn} accessibilityLabel={t('live.zoomIn')}>
-            <Icon name="plus" size={18} color="#fff" />
-          </Pressable>
-          <View style={styles.zoomDivider} />
-          <Pressable onPressIn={() => zoom(-1)} onPressOut={stop} style={styles.zoomBtn} accessibilityLabel={t('live.zoomOut')}>
-            <Icon name="minus" size={18} color="#fff" />
-          </Pressable>
-        </View>
+        {camera.capabilities.ptzZoom !== false ? (
+          <View style={styles.zoom}>
+            <Pressable onPressIn={() => zoom(1)} onPressOut={stop} style={styles.zoomBtn} accessibilityLabel={t('live.zoomIn')}>
+              <Icon name="plus" size={18} color="#fff" />
+            </Pressable>
+            <View style={styles.zoomDivider} />
+            <Pressable onPressIn={() => zoom(-1)} onPressOut={stop} style={styles.zoomBtn} accessibilityLabel={t('live.zoomOut')}>
+              <Icon name="minus" size={18} color="#fff" />
+            </Pressable>
+          </View>
+        ) : null}
       </View>
       {presets.length ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.presets}>

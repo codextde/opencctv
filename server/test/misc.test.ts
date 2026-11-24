@@ -4,7 +4,7 @@ import { parseDemoUrls } from "../src/config.ts";
 import { titleCase, demoSource, demoId } from "../src/demo.ts";
 import { unzipEntries } from "../src/deps.ts";
 import { dayBounds } from "../src/recordings.ts";
-import { wsseHeader, tagValues, attrValues } from "../src/onvif.ts";
+import { wsseHeader, tagValues, attrValues, zoomFromNodes } from "../src/onvif.ts";
 import { parseProbeMatch, scopeValue, guessBrand } from "../src/discovery.ts";
 import { rcloneToken } from "../src/storage/gdrive.ts";
 import { redact } from "../src/log.ts";
@@ -136,5 +136,24 @@ describe("misc", () => {
     expect(matchParts(["api", "cameras", ":id"], ["api", "cameras", "x"])).toEqual({ id: "x" });
     expect(matchParts(["api", "cameras", ":id"], ["api", "cameras"])).toBeUndefined();
     expect(matchParts(["s", ":site", "*"], ["s", "a", "api", "x"])).toEqual({ site: "a", "*": "api/x" });
+  });
+});
+
+describe("onvif zoom detection", () => {
+  const node = (spaces: string) =>
+    `<s:Envelope><s:Body><tptz:GetNodesResponse><tptz:PTZNode token="n"><tt:SupportedPTZSpaces>${spaces}</tt:SupportedPTZSpaces></tptz:PTZNode></tptz:GetNodesResponse></s:Body></s:Envelope>`;
+  const pt = "<tt:ContinuousPanTiltVelocitySpace><tt:URI>u</tt:URI></tt:ContinuousPanTiltVelocitySpace>";
+  test("pan/tilt only means no zoom", () => {
+    expect(zoomFromNodes(node(pt))).toBe(false);
+  });
+  test("a zoom movement space means zoom", () => {
+    expect(zoomFromNodes(node(pt + "<tt:ContinuousZoomVelocitySpace><tt:URI>u</tt:URI></tt:ContinuousZoomVelocitySpace>"))).toBe(true);
+    expect(zoomFromNodes(node(pt + "<tt:AbsoluteZoomPositionSpace><tt:URI>u</tt:URI></tt:AbsoluteZoomPositionSpace>"))).toBe(true);
+  });
+  test("zoom speed alone is not zoom", () => {
+    expect(zoomFromNodes(node(pt + "<tt:ZoomSpeedSpace><tt:URI>u</tt:URI></tt:ZoomSpeedSpace>"))).toBe(false);
+  });
+  test("unknown when spaces are missing", () => {
+    expect(zoomFromNodes("<s:Envelope><s:Body><tptz:GetNodesResponse/></s:Body></s:Envelope>")).toBeUndefined();
   });
 });
