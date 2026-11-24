@@ -95,11 +95,17 @@ export function segmentDecidable(seg: { end: number }, preMs: number, now: numbe
   return !hasOpenEvent && now > seg.end + preMs + 2000;
 }
 
+// Keep at most one frame every 0.5 s. Unlike fps=2 this never invents frames: when the
+// stream's timestamps jump forward (the camera or go2rtc reconnects and the RTP clock
+// restarts), fps=2 fills the gap with duplicates - hours of them - and the process grows
+// by gigabytes. A jump backwards resets the spacing instead of stalling detection.
+export const MOTION_SAMPLE = "select=isnan(prev_selected_t)+gte(t-prev_selected_t\\,0.5)+lt(t\\,prev_selected_t)";
+
 export function buildMotionArgs(ffmpeg: string, input: string, keyframesOnly: boolean): string[] {
   const args = [ffmpeg, "-hide_banner", "-nostats", "-nostdin", "-loglevel", "info", "-threads", "1"];
   if (keyframesOnly) args.push("-skip_frame", "nokey");
   if (input.startsWith("rtsp")) args.push("-rtsp_transport", "tcp", "-timeout", "15000000");
-  args.push("-an", "-i", input, "-vf", `fps=2,scale=320:-2,select=gte(scene\\,0),metadata=print`, "-an", "-f", "null", "-");
+  args.push("-an", "-i", input, "-vf", `${MOTION_SAMPLE},scale=320:-2,select=gte(scene\\,0),metadata=print`, "-an", "-f", "null", "-");
   return args;
 }
 

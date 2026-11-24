@@ -53,7 +53,13 @@ describe("motion", () => {
   });
   test("detector command samples at 2 fps and prints scene scores", () => {
     const a = buildMotionArgs("ffmpeg", "rtsp://127.0.0.1/c?video", false).join(" ");
-    expect(a).toContain("fps=2,scale=320:-2,select=gte(scene\\,0),metadata=print");
+    expect(a).toContain("gte(t-prev_selected_t\\,0.5)");
+    expect(a).toContain(",scale=320:-2,select=gte(scene\\,0),metadata=print");
     expect(buildMotionArgs("ffmpeg", "x", true)).toContain("nokey");
+  });
+  test("detector sampling never duplicates frames across timestamp jumps", () => {
+    const vf = buildMotionArgs("ffmpeg", "x", false).join(" ");
+    expect(vf).not.toContain("fps=");
+    expect(vf).toContain("lt(t\\,prev_selected_t)");
   });
 });
