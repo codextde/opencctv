@@ -132,7 +132,10 @@ export function go2rtcSources(c: CameraRecord, ffmpegAvailable: boolean, eufySou
   for (const e of c.caps.extra ?? []) main.push(e);
   if (ffmpegAvailable) {
     if (c.kind === "http") main.push(`ffmpeg:${c.streamKey}#video=h264`);
-    else main.push(`ffmpeg:${c.streamKey}#audio=aac`, `ffmpeg:${c.streamKey}#video=mjpeg`);
+    // Opus lets WebRTC carry the camera audio. Without it the player's WebRTC stream has video only and
+    // video-rtc.js drops it in favour of MSE (H.264+AAC scores higher), so live view never gets WebRTC latency.
+    // go2rtc only starts these transcoders when a consumer asks for that codec.
+    else main.push(`ffmpeg:${c.streamKey}#audio=aac`, `ffmpeg:${c.streamKey}#audio=opus`, `ffmpeg:${c.streamKey}#video=mjpeg`);
   }
   out.push({ name: c.streamKey, sources: main });
   if (c.subUrl) out.push({ name: `${c.streamKey}_sub`, sources: [c.subUrl] });

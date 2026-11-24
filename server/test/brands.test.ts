@@ -88,7 +88,7 @@ describe("go2rtc sources", () => {
   test("main + sub with ffmpeg helpers", () => {
     const s = go2rtcSources(base, true);
     expect(s[0]!.name).toBe("c1");
-    expect(s[0]!.sources).toEqual(["rtsp://a/1", "ffmpeg:c1#audio=aac", "ffmpeg:c1#video=mjpeg"]);
+    expect(s[0]!.sources).toEqual(["rtsp://a/1", "ffmpeg:c1#audio=aac", "ffmpeg:c1#audio=opus", "ffmpeg:c1#video=mjpeg"]);
     expect(s[1]).toEqual({ name: "c1_sub", sources: ["rtsp://a/2"] });
   });
   test("push camera has no source", () => {
