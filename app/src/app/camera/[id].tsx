@@ -8,7 +8,7 @@ import { FlatList, Platform, StyleSheet, Text, useWindowDimensions, View } from 
 import Animated, { FadeIn, FadeOut, useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { showActions } from '@/components/action-sheet';
+import { ActionSheetHost, showActions } from '@/components/action-sheet';
 import { StatusChips, useMotionActive } from '@/components/camera-badges';
 import { Icon } from '@/components/icon';
 import { LiveSnapshot } from '@/components/live-snapshot';
@@ -200,6 +200,7 @@ export default function LiveFullscreen() {
 
   return (
     <View style={styles.root}>
+      <ActionSheetHost />
       <StatusBar hidden={landscape || !controls} style="light" animated />
       <FlatList
         ref={pager}

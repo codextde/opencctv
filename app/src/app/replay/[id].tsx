@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ActionSheetHost } from '@/components/action-sheet';
 import { PlaybackView } from '@/components/playback-view';
 import { Button, Loading } from '@/components/ui';
 import { GlassButton } from '@/components/video-controls';
@@ -36,6 +37,7 @@ export default function Replay() {
 
   return (
     <View style={styles.root}>
+      <ActionSheetHost />
       <StatusBar style="light" hidden={width > height} />
       <PlaybackView
         camera={camera}
