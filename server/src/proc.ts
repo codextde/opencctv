@@ -29,6 +29,12 @@ export type SupervisorOpts = {
   minBackoffMs?: number;
   maxBackoffMs?: number;
   healthyAfterMs?: number;
+  /**
+   * Restart the process when it keeps running but `progress()` has not been called for this long.
+   * ffmpeg can stay alive without producing anything, e.g. after the camera behind go2rtc reconnects
+   * and the RTP timestamps jump; it never exits, so the exit-based restart alone does not recover it.
+   */
+  stallMs?: number;
 };
 
 export class Supervisor {
@@ -37,6 +43,8 @@ export class Supervisor {
   private backoff: number;
   private timer?: ReturnType<typeof setTimeout>;
   private startedAt = 0;
+  private lastProgress = 0;
+  private stallTimer?: ReturnType<typeof setInterval>;
   lastError?: string;
   restarts = 0;
   readonly log: Logger;
@@ -57,7 +65,31 @@ export class Supervisor {
   start(): void {
     if (!this.stopped) return;
     this.stopped = false;
+    const stallMs = this.opts.stallMs;
+    if (stallMs && stallMs > 0) {
+      clearInterval(this.stallTimer);
+      this.stallTimer = setInterval(() => this.checkStall(stallMs), Math.min(10_000, Math.max(1000, stallMs / 3)));
+    }
     this.spawn();
+  }
+
+  /** Marks that the process produced output, see `stallMs`. */
+  progress(): void {
+    this.lastProgress = Date.now();
+  }
+
+  private checkStall(stallMs: number) {
+    const p = this.proc;
+    if (!p || p.exitCode !== null || this.stopped) return;
+    const idle = Date.now() - Math.max(this.lastProgress, this.startedAt);
+    if (idle < stallMs) return;
+    this.lastError = `no progress for ${Math.round(idle / 1000)}s`;
+    this.log.warn(`${this.lastError}, restarting`);
+    this.lastProgress = Date.now();
+    p.kill("SIGINT"); // lets ffmpeg finish the current file; handleExit() schedules the restart
+    setTimeout(() => {
+      if (this.proc === p && p.exitCode === null) p.kill("SIGKILL");
+    }, 5000);
   }
 
   private spawn(): void {
@@ -77,6 +109,7 @@ export class Supervisor {
       });
       this.proc = proc;
       this.startedAt = Date.now();
+      this.lastProgress = this.startedAt;
       this.opts.onStart?.();
       void readLines(proc.stdout, (l) => this.opts.onStdout?.(l));
       void readLines(proc.stderr, (l) => {
@@ -112,6 +145,8 @@ export class Supervisor {
   async stop(): Promise<void> {
     this.stopped = true;
     clearTimeout(this.timer);
+    clearInterval(this.stallTimer);
+    this.stallTimer = undefined;
     const p = this.proc;
     this.proc = undefined;
     if (!p) return;

@@ -182,7 +182,9 @@ export class MotionDetector {
         },
         onStderr: (line) => {
           const score = parseSceneScore(line);
-          if (score === undefined || Date.now() - startedAt < 5000) return;
+          if (score === undefined) return;
+          det.sup.progress();
+          if (Date.now() - startedAt < 5000) return;
           for (const ev of tracker.feed(Date.now(), score)) this.dispatch(det, ev);
         },
         onExit: () => {
@@ -190,6 +192,8 @@ export class MotionDetector {
         },
         minBackoffMs: 5000,
         maxBackoffMs: 120_000,
+        // Scene scores arrive twice a second; with -skip_frame nokey they come in bursts per keyframe.
+        stallMs: 60_000,
       }),
     };
     this.dets.set(cam.id, det);
